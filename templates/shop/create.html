@@ -1,0 +1,335 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bg-white py-5 rounded-4 mt-3 shadow container" id="app">
+    <form action="" class="">
+        <div class="row row-cols-1  m-auto">
+            <div class="col">
+                <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                <input type="text" class="form-control form-control-lg" id="username" v-model="username" required>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-lg-2 m-auto">
+            <div class="col">
+                <label for="password" class="form-label">รหัสผ่าน</label>
+                <input type="password" class="form-control form-control-lg" id="password" v-model="password" required>
+            </div>
+            <div class="col">
+                <label for="confirm" class="form-label">ยืนยัน</label>
+                <input type="password" class="form-control form-control-lg" id="confirm" v-model="confirm" required>
+            </div>
+        </div>
+        <div class="row row-cols-1 m-auto">
+            <div class="col">
+                <label for="shop_name" class="form-label">ผู้ผลิต</label>
+                <input type="text" class="form-control form-control-lg" id="shop_name" v-model="shop_name" required>
+            </div>
+
+            <div class="col">
+                <label for="pro-type" class="form-label">ประเภทสิทค้า</label>
+                <input type="text" class="form-control form-control-lg" id="pro-type" v-model="product_type" required>
+            </div>
+
+            <div class="col">
+                <label for="contact" class="form-label">ผุ้ติดต่อ</label>
+                <input type="text" class="form-control form-control-lg" id="contact" v-model="contact" required>
+            </div>
+        </div>
+        <hr>
+        <h3 class="px-3 py-3">ข้อมูลที่อยู่</h3>
+        <div class="row row-cols-1 row-cols-lg-2 m-auto">
+
+            <div class="col">
+                <label for="province" class="form-label">จังหวัด</label>
+                <select class="form-select form-select-lg" id="province" v-model="province" @change="onProvinceChange()"
+                    required>
+                    <option selected disabled value="">เลือก</option>
+                    <option v-for="item in province_list" :value="item">[{ item }]</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <label for="district" class="form-label">อำเภอ</label>
+                <select class="form-select form-select-lg" id="district" v-model="district" @change="onDistrictChange()"
+                    required>
+                    <option selected disabled value="">เลือก</option>
+                    <option v-for="item in district_list" :value="item">[{ item }]</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <label for="subDistrict" class="form-label">ตำบล</label>
+                <select class="form-select form-select-lg" id="subDistrict" v-model="subDistrict" required>
+                    <option selected disabled value="">เลือก</option>
+                    <option v-for="item in subDistrict_list" :value="item">[{ item }]</option>
+                </select>
+            </div>
+
+            <div class="col">
+                <label for="postID" class="form-label">รหัสไปรษณีย์</label>
+                <input type="text" class="form-control form-control-lg" id="postID" placeholder="00000" v-model="postID" required>
+            </div>
+
+            <div class="col">
+                <label for="detail-address" class="form-label">รายละเอียดที่อยู่</label>
+                <textarea class="form-control" id="detail-address" placeholder="บ้านเลขที่ ถนน ซอย" required
+                    v-model="detail_address"></textarea>
+            </div>
+
+
+        </div>
+        <hr>
+        <h3 class="px-3 py-3">ข้อมูลการติดต่อ</h3>
+        <div class="row row-cols-1 row-cols-lg-3 m-auto">
+            <div class="col">
+                <label for="tel" class="form-label">โทรศัพท์</label>
+                <input type="text" class="form-control form-control-lg" id="tel" v-model="tel" required>
+            </div>
+            <div class="col">
+                <label for="fax" class="form-label">แฟกซ์</label>
+                <input type="fax" class="form-control form-control-lg" id="fax" v-model="fax" required>
+            </div>
+            <div class="col">
+                <label for="email" class="form-label">อีเมล</label>
+                <input type="email" class="form-control form-control-lg" id="email" v-model="email" required>
+            </div>
+        </div>
+        <div class="row row-cols-1 m-auto">
+            <div class="col">
+                <label for="remark" class="form-label">หมายเหตุ</label>
+                <textarea class="form-control" id="remark" placeholder="" required v-model="remark"></textarea>
+            </div>
+        </div>
+
+        <hr class="my-3">
+        <div class="row row-cols-1">
+            <div class="col">
+                <div class="d-flex flex-row justify-content-end align-items-center">
+                    <a href="{% url 'show-shop-page' %}" class="btn btn-danger btn-lg mx-3">ยกเลิก</a>
+                    <button type="submit" @click="onSubmit($event)" class="btn btn-lg btn-success mx-3">เพิ่ม</button>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </form>
+
+</section>
+<script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp(
+        {
+            delimiters: ["[{", "}]"],
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    confirm: '',
+
+                    shop_name: '',
+                    product_type: '',
+                    contact: '',
+                    province: '',
+                    district: '',
+                    subDistrict: '',
+                    postID: '',
+                    detail_address: '',
+                    tel: '',
+                    fax: '',
+                    email: '',
+                    remark: '',
+
+                    username_isValid: true,
+                    password_isValid: true,
+                    confirm_isValid: true,
+
+                    shop_name_isValid: true,
+                    product_type_isValid: true,
+                    contact_isValid: true,
+                    province_isValid: true,
+                    district_isValid: true,
+                    subDistrict_isValid: true,
+                    postID_isValid: true,
+                    detail_address_isValid: true,
+                    tel_isValid: true,
+                    fax_isValid: true,
+                    email_isValid: true,
+
+                    isValid:true,
+
+                    province_list: null,
+                    district_list: null,
+                    subDistrict_list: null,
+                };
+            },
+            mounted() {
+                axios
+                    .get("{% url 'get-province' %}")
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.province_list = response.data['data'];
+                        }
+                    });
+
+
+                console.log('create shop');
+            },
+            methods: {
+                onProvinceChange() {
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append('province', this.province);
+                    axios
+                        .post("{% url 'get-district' %}", form_data)
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.district_list = response.data['data'];
+                            }
+                        });
+                },
+                onDistrictChange() {
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append('province', this.province);
+                    form_data.append('district', this.district);
+                    axios
+                        .post("{% url 'get-subDistrict' %}", form_data)
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.subDistrict_list = response.data['data'];
+                            }
+                        });
+                },
+                onSubmit(e) {
+                    e.preventDefault();
+
+                    this.isValid = true
+
+                    this.username_isValid = true
+                    if (this.username == ''){
+                        this.username_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.password_isValid = true
+                    if (this.password !== this.confirm || this.password.length < 8){
+                        this.password_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.shop_name_isValid = true
+                    if (this.shop_name == ''){
+                        this.shop_name_isValid = false
+                        this.isValid = false
+                    }
+
+                    
+                    this.product_type_isValid = true
+                    if (this.product_type == ''){
+                        this.product_type_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.contact_isValid = true
+                    if (this.contact == ''){
+                        this.contact_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.province_isValid = true
+                    if (this.province == ''){
+                        this.province_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.district_isValid = true
+                    if (this.district == ''){
+                        this.district_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.subDistrict_isValid = true
+                    if (this.subDistrict == ''){
+                        this.subDistrict_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.postID_isValid = true
+                    if (this.postID == ''){
+                        this.postID_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.detail_address_isValid = true
+                    if (this.detail_address == ''){
+                        this.detail_address_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.tel_isValid = true
+                    if (this.tel.length != 10 ){
+                        this.tel_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.fax_isValid = true
+                    if (this.fax.length == '' ){
+                        this.fax_isValid = false
+                        this.isValid = false
+                    }
+
+                    this.email_isValid = true
+                    if (this.email == ''){
+                        this.email_isValid = false
+                        this.isValid = false
+                    }
+
+
+
+                    if (this.isValid) {
+                        const form_data = new FormData();
+
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append("username", this.username);
+                        form_data.append("password", this.password);                        
+                        form_data.append("shop_name", this.shop_name);
+                        form_data.append("product_type", this.product_type)
+                        form_data.append("contact", this.contact);
+                        form_data.append("province", this.province);
+                        form_data.append("district", this.district);
+
+                        form_data.append("sub_district", this.subDistrict);
+                        form_data.append("post_id", this.postID);
+                        form_data.append("detail_address", this.detail_address);
+                        form_data.append("tel", this.tel);
+                        form_data.append("fax", this.fax);
+                        form_data.append("email", this.email);
+                        form_data.append("remark", this.remark);
+
+                        axios
+                         .post("{% url 'create-shop-api' %}", form_data)
+                         .then((response)=>{
+                            if(response.data['status']){
+                                alert('success')
+                                setTimeout(2000)
+                                location.replace('/')
+                            }
+                            else {
+                                alert(response.data['message']);
+                            }
+                         })
+                    }
+                }
+            }
+        }
+    );
+    app.mount('#app')
+
+</script>
+
+{% endblock content %}

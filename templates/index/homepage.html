@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="container py-5 px-3 bg-white mt-5">
+    <h1>ส่วนของผู้ผลิต</h1>
+    <hr>
+    <div class="row row-cols-1 g-3 row-cols-lg-3 m-auto">
+        <div class="col p-3 border rounded-4 ">
+            <a href="{% url 'show-product-page' %}" class="nav-link text-center">สินค้า</a>
+        </div>
+    </div>
+    <h1>ส่วนแอดมิน</h1>
+    <hr>
+    <div class="row row-cols-2 g-3 row-cols-lg-3 m-auto">
+        <div class="col p-3 border rounded-4 ">
+            <a href="{% url 'show-shop-page' %}" class="nav-link text-center">ผู้ผลิต</a>
+        </div>
+        <div class="col p-3 border rounded-4 ">
+            <a href="{% url 'show-product-page' %}" class="nav-link text-center">สินค้า</a>
+        </div>
+    </div>
+
+</section>
+
+
+
+
+{% endblock content %}

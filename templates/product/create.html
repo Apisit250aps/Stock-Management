@@ -1,0 +1,312 @@
+{% extends 'product/base.html' %}
+{% load static %}
+
+{% block content %}
+<div id="app">
+    <nav class="rounded-4 shadow-sm row row-cols-1 row-cols-lg-2 m-auto bg-white navbar">
+        <div class="col">
+            <div class="navbar-brand">
+                <h1 class="fs-2">ข้อมูลสินค้า</strong>
+            </div>
+        </div>
+        <div class="col">
+            <div class=" d-flex flex-row justify-content-around align-items-center">
+                <a href="{% url 'show-product-page' %}" class="p-2 rounded-2 border nav-link text-white bg-info">แสดงสินค้า</a>
+                <a href="{% url 'create-product-page' %}"
+                    class="p-2 rounded-2 border nav-link text-white bg-primary">เพิ่มข้อมูล</a>
+                <a href="" class="p-2 rounded-2 border nav-link text-white bg-warning">แก้ไขข้อมูล</a>
+                <a href="" class="p-2 rounded-2 border nav-link text-white bg-danger">ลบข้อมูล</a>
+            </div>
+        </div>
+    </nav>
+    <section class="bg-white py-5 rounded-4 mt-3 shadow container">
+        <form action="" class="">
+            
+            <hr>
+            <h3 class="px-3 py-3">ข้อมูลสินค้า</h3>
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <label for="product_name" class="form-label">ชื่อสินค้า</label>
+                    <input type="text" class="form-control form-control-lg" id="product_name" v-model="product_name"
+                        required>
+                </div>
+                <div class="col">
+                    <label for="product_detail" class="form-label">รายละเอียดสินค้า</label>
+                    <input type="text" class="form-control form-control-lg" id="product_detail" v-model="product_detail"
+                        required>
+                </div>
+
+
+            </div>
+
+            <div class="row row-cols-2 row-cols-lg-5 m-auto">
+                <div class="col">
+                    <label for="price" class="form-label">ราคา</label>
+                    <input @input="setTotal()" type="number" class="form-control form-control-lg" id="price"
+                        v-model="price" required>
+                </div>
+                <div class="col">
+                    <label for="unit" class="form-label">จำนวน</label>
+                    <input @input="setTotal()" type="number" class="form-control form-control-lg" id="unit"
+                        v-model="unit" required>
+                </div>
+                <div class="col">
+                    <label for="total" class="form-label">รวม</label>
+                    <input type="number" disabled class="form-control form-control-lg" id="total" v-model="total"
+                        required>
+                </div>
+                <div class="col">
+                    <label for="discount" class="form-label">ส่วนลด</label>
+                    <input type="number" @input="setTotalPrice()" class="form-control form-control-lg" id="discount"
+                        v-model="discount" required>
+                </div>
+                <div class="col">
+                    <label for="total_price" class="form-label">รวมเป็นเงิน</label>
+                    <input type="number" disabled class="form-control form-control-lg" id="total_price"
+                        v-model="total_price" required>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <div class="d-flex flex-row justify-content-end align-items-center">
+                        <!-- <a href="{% url 'show-shop-page' %}" class="btn btn-danger btn-lg mx-3">ยกเลิก</a> -->
+                        <button type="button" @click="addProductList($event)"
+                            class="btn btn-lg btn-success mx-3">เพิ่ม</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-1 my-3 mx-auto">
+                <div class="col">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <td>#</td>
+                                <td>ชื่อสินค้า</td>
+                                <td>รายละเอียดสินค้า</td>
+                                <td>ราคา</td>
+                                <td>จำนวน</td>
+                                <td>รวม</td>
+                                <td>ส่วนลด</td>
+                                <td>รวมเป็นเงิน</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in product_list" :key="index">
+                                <td>[{ index + 1 }]</td>
+                                <td>[{ item.product_name }]</td>
+                                <td>[{ item.product_detail }]</td>
+                                <td>[{ item.price }]</td>
+                                <td>[{ item.unit }]</td>
+                                <td>[{ item.total }]</td>
+                                <td>[{ item.discount }]</td>
+                                <td>[{ item.total_price }]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <label for="remark" class="form-label">หมายเหตุ</label>
+                    <textarea class="form-control" id="remark" placeholder="" required v-model="remark"></textarea>
+                </div>
+            </div>
+
+            <hr class="my-3">
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <div class="d-flex flex-row justify-content-end align-items-center">
+                        <a href="{% url 'show-shop-page' %}" class="btn btn-danger btn-lg mx-3">ยกเลิก</a>
+                        <button type="button" @click="onSubmit($event)"
+                            class="btn btn-lg btn-success mx-3">บันทึก</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </section>
+</div>
+<script>
+    const { createApp, ref } = Vue;
+
+    const app = createApp({
+        delimiters: ["[{", "}]"],
+        data() {
+            return {
+                user_id: null,
+
+                remark: '',
+                product_code: '',
+                product_name: '',
+                product_detail: '',
+
+                product_list: new Array(),
+
+                price: 0,
+                unit: 0,
+                total: 0,
+                discount: 0,
+                total_price: 0,
+
+                product_code_isValid: true,
+                product_name_isValid: true,
+                product_detail_isValid: true,
+
+                price_isValid: true,
+                unit_isValid: true,
+                total_isValid: true,
+                discount_isValid: true,
+                total_price_isValid: true,
+
+                product_list_isValid: true,
+
+
+                isValid: true
+            };
+        },
+        computed: {
+
+        },
+        mounted() {
+            this.total = this.price * this.unit;
+            console.log("hello");
+
+            axios
+                .get("{% url 'get-user-id' %}")
+                .then((response) => {
+                    if (response.data['status']) {
+                        this.user_id = response.data['uid'];
+                    }
+                });
+
+
+        },
+        methods: {
+            setTotalPrice() {
+                let total = this.total;
+                let discount = this.discount;
+                this.total_price = total - discount;
+            },
+            setTotal() {
+                this.total = this.price * this.unit;
+            },
+            onProvinceChange() {
+                const form_data = new FormData;
+                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                form_data.append('province', this.province);
+                axios
+                    .post("{% url 'get-district' %}", form_data)
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.district_list = response.data['data'];
+                        }
+                    });
+            },
+            onDistrictChange() {
+                const form_data = new FormData;
+                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                form_data.append('province', this.province);
+                form_data.append('district', this.district);
+                axios
+                    .post("{% url 'get-district' %}", form_data)
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.subDistrict_list = response.data['data'];
+                        }
+                    });
+            },
+            addProductList(e) {
+                e.preventDefault();
+                this.isValid = true;
+
+                <!--  -->
+
+                this.product_name_isValid = true;
+                if (this.product_name == '') {
+                    this.product_name_isValid = false;
+                    this.isValid = false;
+                }
+
+                this.total_isValid = true;
+                if (this.total == 0) {
+                    this.total_isValid = false;
+                    this.isValid = false;
+                }
+
+                this.total_price_isValid = true;
+                if (this.total_price == 0) {
+                    this.total_price_isValid = false;
+                    this.isValid = false;
+                }
+
+                if (this.isValid) {
+                    let product_obj = {
+                        "product_name": this.product_name,
+                        "product_detail": this.product_detail,
+                        "price": this.price,
+                        "unit": this.unit,
+                        "total": this.total,
+                        "discount": this.discount,
+                        "total_price": this.total_price
+                    };
+
+                    this.product_list.push(product_obj);
+                    this.product_code = '';
+                    this.product_name = '';
+                    this.product_detail = '';
+                    this.price = 0;
+                    this.unit = 0;
+                    this.total = 0;
+                    this.discount = 0;
+                    this.total_price = 0;
+                }
+
+            },
+            onSubmit(e) {
+                e.preventDefault();
+
+                this.isValid = true;
+
+                this.product_list_isValid = true;
+                if (this.product_list.length == 0) {
+                    this.product_list_isValid = false;
+                    this.isValid = false;
+                }
+
+
+
+
+                if (this.isValid) {
+                    const data = JSON.stringify(Object.assign({}, this.product_list));
+                    const form_data = new FormData();
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append("products", data);
+                    form_data.append('remark', this.remark);
+                    form_data.append('user', this.user_id);
+
+                    console.log(this.product_list);
+                    axios
+                        .post("{% url 'create-InputData-api' %}", form_data)
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.product_list = new Array();
+                                alert("บันทึกข้อมูลสำเร็จ")
+                            }
+                            else {
+                                this.product_list = new Array();
+                                alert("บันทึกข้อมูลล้มเหลว")
+                            }
+                        });
+
+                }
+
+
+            }
+        }
+    });
+    app.mount('#app')
+</script>
+
+{% endblock content %}

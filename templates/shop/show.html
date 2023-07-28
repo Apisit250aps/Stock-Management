@@ -1,0 +1,357 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+    integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
+    crossorigin="anonymous"></script>
+<div id="app">
+    <nav class="rounded-4 shadow-sm row bg-white row-cols-1 row-cols-lg-2 m-auto navbar">
+        <div class="col">
+            <div class="navbar-brand">
+                <h1 class="fs-2">ข้อมูลผู้ผลิต</strong>
+            </div>
+        </div>
+        <div class="col">
+            <div class=" d-flex flex-row justify-content-around align-items-center">
+                <a href="" class="p-2 rounded-2 border nav-link text-white bg-info">พิมพ์รายการ</a>
+                <a href="{% url 'create-shop-page' %}"
+                    class="p-2 rounded-2 border nav-link text-white bg-primary">เพิ่มข้อมูล</a>
+                <a href="" data-bs-toggle="modal" data-bs-target="#editModal" @click="editor()"
+                    :class="{ 'disabled':!on_edit }"
+                    class="p-2 rounded-2 border nav-link text-white bg-warning">แก้ไขข้อมูล</a>
+                <button type="button" class="p-2 rounded-2 border nav-link text-white bg-danger" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal" :class="{ 'disabled':!on_delete }">ลบข้อมูล</button>
+            </div>
+        </div>
+    </nav>
+    <section class="bg-white">
+        <div class=" px-3 py-2 rounded-4 shadow-sm mt-5">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">#</th>
+                        <th scope="col">#</th>
+                        <th scope="col">รหัส</th>
+                        <th scope="col">ชื่อผู้ผลิต</th>
+                        <th scope="col">ประเภทสินค้า</th>
+                        <th scope="col">ผู้ติดต่อ</th>
+                        <th scope="col">จังหวัด</th>
+                        <th scope="col">อำเภอ</th>
+                        <th scope="col">ตำบล</th>
+                        <th scope="col">รายละเอียดที่อยู่</th>
+                        <th scope="col">รหัสไปรษณีย์</th>
+                        <!-- <th scope="col">รหัสพื้นที่</th> -->
+                        <th scope="col">โทรศัพท์</th>
+                        <th scope="col">แฟกซ์</th>
+                        <th scope="col">อีเมล</th>
+                        <th scope="col">หมายเหตู</th>
+                        <th scope="col">เพิ่มเมื่อ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in shop_list" :key="index">
+                        <td>
+                            <form action="">
+                                <input type="checkbox" @change="Selection($event)" :value="index">
+                            </form>
+                        </td>
+                        <td>[{ index + 1 }]</td>
+                        <td>[{ item.shop_code }]</td>
+                        <td>[{ item.shop_name }]</td>
+                        <td>[{ item.shop_product_type }]</td>
+                        <td>[{ item.shop_contact }]</td>
+                        <td>[{ item.shop_province }]</td>
+                        <td>[{ item.shop_district }]</td>
+                        <td>[{ item.shop_subdistrict }]</td>
+                        <td>[{ item.shop_detail_address }]</td>
+                        <td>[{ item.shop_post_code }]</td>
+                        <td>[{ item.shop_tel }]</td>
+                        <td>[{ item.shop_fax }]</td>
+                        <td>[{ item.shop_email }]</td>
+                        <td>[{ item.shop_remark }]</td>
+                        <td>[{ item.add_date }]</td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+    <div class="modal fade" id="editModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+            <form action="" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">แก้ไขข้อมูล ผู้ผลิต</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div action="" class="row row-cols-2 mx-auto">
+                        <div class="col my-2">
+                            <label for="code" class=" form-label">รหัสผู้ผลิต</label>
+                            <input type="text" v-model="edit_code" disabled id="code" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="name" class=" form-label">ผู้ผลิต</label>
+                            <input type="text" v-model="edit_name" id="name" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="product_type" class=" form-label">ประเภทสินค้า</label>
+                            <input type="text" v-model="edit_product_type" id="product_type" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="contact" class=" form-label">ผู้ติดต่อ</label>
+                            <input type="text" v-model="edit_contact" id="contact" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="province" class=" form-label">จังหวัด</label>
+                            <input type="text" v-model="edit_province" id="province" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="district" class=" form-label">อำเภอ</label>
+                            <input type="text" v-model="edit_district" id="district" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="subdistrict" class=" form-label">ตำบล</label>
+                            <input type="text" v-model="edit_sub_district" id="subdistrict" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="detail" class=" form-label">รายละเอียดที่อยู่</label>
+                            <input type="text" v-model="edit_detail" id="detail" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="post_id" class=" form-label">รหัสไปรษณีย์</label>
+                            <input type="text" v-model="edit_post_id" id="post_id" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="tel" class=" form-label">โทรศัพท์</label>
+                            <input type="text" v-model="edit_tel" id="tel" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="fax" class=" form-label">แฟกซ์</label>
+                            <input type="text" v-model="edit_fax" id="fax" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="email" class=" form-label">อีเมล</label>
+                            <input type="text" v-model="edit_email" id="email" class="form-control">
+                        </div>
+                        <div class="col my-2">
+                            <label for="remark" class=" form-label">หมายเหตู</label>
+                            <input type="text" v-model="edit_remark" id="remark" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="editModalClose">Close</button>
+                    <button type="submit" @click="submitEdit($event)" class="btn btn-primary">แก้ไข</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">ลบข้อมูล</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert">
+                        <strong>สินค้าที่เลือกจะถูกลบ!</strong>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="closeModalDel">Close</button>
+                    <button type="button" @click="deleteSelect()" class="btn btn-danger">ลบข้อมูล</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const myModal0 = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const myModal1 = new bootstrap.Modal(document.getElementById('editModal'))
+
+</script>
+
+<script>
+
+    const { createApp } = Vue;
+    const app = createApp(
+        {
+            delimiters: ["[{", "}]"],
+            data() {
+                return {
+                    shop_list: null,
+                    selected: [],
+                    on_edit: false,
+
+                    edit_id: '',
+                    edit_code: '',
+                    edit_name: '',
+                    edit_product_type: '',
+                    edit_contact: '',
+                    edit_province: '',
+                    edit_district: '',
+                    edit_sub_district: '',
+                    edit_detail: '',
+                    edit_post_id: '',
+                    edit_tel: '',
+                    edit_fax: '',
+                    edit_email: '',
+                    edit_remark: '',
+
+                    on_delete:false
+
+                };
+            },
+            mounted() {
+                axios
+                    .get("{% url 'get-shop-all' %}")
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.shop_list = response.data['data'];
+                        }
+                    });
+                console.log("load successfully");
+            },
+            methods: {
+                deleteSelect() {
+                    for (let i of this.selected) {
+                        console.log(i.shop_id);
+                        let id = i.shop_id;
+                        const form_data = new FormData();
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append("shop_id", i.shop_id);
+                        axios
+                            .post("{% url 'delete-shop-api' %}", form_data)
+                            .then((response) => {
+                                if (response.data['status']) {
+                                    console.log("delete successfully!");
+                                }
+                            });
+                    }
+                    document.getElementById("closeModalDel").click();
+                    axios
+                        .get("{% url 'get-shop-all' %}")
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.shop_list = response.data['data'];
+                            }
+                        });
+
+                    location.reload()
+
+
+                },
+                submitEdit(e) {
+                    e.preventDefault();
+                    const form_data = new FormData();
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+
+                    form_data.append("shop_id", this.edit_id);
+                    form_data.append("shop_name", this.edit_name);
+                    form_data.append("shop_product_type", this.edit_product_type);
+                    form_data.append("shop_contact", this.edit_contact);
+                    form_data.append("shop_post_code", this.edit_post_id);
+                    form_data.append("shop_province", this.edit_province);
+                    form_data.append("shop_district", this.edit_district);
+                    form_data.append("shop_subdistrict", this.edit_sub_district);
+                    form_data.append("shop_detail_address", this.edit_detail);
+                    form_data.append("shop_tel", this.edit_tel);
+                    form_data.append("shop_fax", this.edit_fax);
+                    form_data.append("shop_email", this.edit_email);
+                    form_data.append("shop_remark", this.edit_remark);
+
+                    axios
+                        .post("{% url 'edit-shop-api' %}", form_data)
+                        .then((response) => {
+                            if (response.data['status']) {
+
+                                axios
+                                    .get("{% url 'get-shop-all' %}")
+                                    .then((response) => {
+                                        if (response.data['status']) {
+                                            axios
+                                                .get("{% url 'get-shop-all' %}")
+                                                .then((response) => {
+                                                    if (response.data['status']) {
+                                                        alert("แก้ไขสำเร็จ")
+                                                        this.shop_list = response.data['data'];
+                                                    }
+                                                });
+                                        }
+                                    });
+                               
+                                document.getElementById("editModalClose").click();
+
+                            }
+                        });
+                },
+                editor() {
+                    this.edit_id = this.selected[0].shop_id;
+                    this.edit_code = this.selected[0].shop_code;
+                    this.edit_name = this.selected[0].shop_name;
+                    this.edit_product_type = this.selected[0].shop_product_type;
+                    this.edit_contact = this.selected[0].shop_contact;
+                    this.edit_province = this.selected[0].shop_province;
+                    this.edit_district = this.selected[0].shop_district;
+                    this.edit_sub_district = this.selected[0].shop_subdistrict;
+                    this.edit_detail = this.selected[0].shop_detail_address;
+                    this.edit_post_id = this.selected[0].shop_post_code;
+                    this.edit_tel = this.selected[0].shop_tel;
+                    this.edit_fax = this.selected[0].shop_fax;
+                    this.edit_email = this.selected[0].shop_email;
+                    this.edit_remark = this.selected[0].shop_remark;
+
+
+                },
+
+                Selection(e) {
+                    let index = e.target.value;
+                    let value = this.shop_list[index];
+
+                    if (this.selected.includes(value)) {
+                        this.selected.splice(this.selected.indexOf(value), 1);
+                    }
+                    else {
+                        this.selected.push(value);
+                    }
+
+                    if (this.selected.length == 1) {
+                        this.on_edit = true;
+                    }
+                    else {
+                        this.on_edit = false;
+                    }
+
+                    if (this.selected.length >= 1){
+                        this.on_delete = true
+                    }
+                    else {
+                        this.on_delete = false
+                    }
+                    console.log(this.selected);
+
+                }
+            }
+        }
+    );
+    app.mount('#app')
+
+</script>
+
+{% endblock content %}
