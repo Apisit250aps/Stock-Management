@@ -13,8 +13,9 @@ class ProductData(models.Model):
     product_id = models.AutoField(primary_key=True, unique=True)
     product_code = models.CharField(max_length=16, unique=True, null=True)
     product_name = models.CharField(max_length=256)
-    unit_cost = models.FloatField()
+    product_price = models.DecimalField(max_digits=8, decimal_places=2)
     product_desc = models.TextField(default="-")
+    unit_cost = models.DecimalField(max_digits=8, decimal_places=2)
     
     add_date = models.DateTimeField(auto_now_add=True)
     
@@ -110,8 +111,8 @@ class InputInvoice(models.Model):
     invoice_id = models.AutoField(primary_key=True, unique=True)
     invoice_no = models.CharField(max_length=16, unique=True, null=True)
     shop = models.ForeignKey(ShopData, on_delete=models.CASCADE)
-    total_price = models.FloatField()
-    discount = models.FloatField()
+    total_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
     remark = models.TextField(default="-")
     
     input_date = models.DateTimeField(auto_now_add=True)
@@ -127,8 +128,8 @@ class InputData(models.Model):
     invoice_no = models.CharField(max_length=16,  null=True)
     product = models.ForeignKey(ProductData, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    unit_price = models.FloatField()
-    discount = models.FloatField()
+    unit_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
     
     def __str__(self):
     
@@ -140,8 +141,8 @@ class OutputInvoice(models.Model):
     invoice_id = models.AutoField(primary_key=True, unique=True)
     invoice_no = models.CharField(max_length=16, unique=True, null=True)
     customer = models.ForeignKey(CustomerData, on_delete=models.CASCADE)
-    total_price = models.FloatField()
-    discount = models.FloatField()
+    total_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
     remark = models.TextField(default="-")
     
     input_date = models.DateTimeField(auto_now_add=True)
@@ -157,14 +158,14 @@ class OutputData(models.Model):
     invoice_no = models.CharField(max_length=16,  null=True)
     product = models.ForeignKey(ProductData, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    sale_price = models.FloatField()
-    discount = models.FloatField()
+    sale_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
     
     def __str__(self):
         
         return self.invoice_no
       
-    
+      
 class DBCounter(models.Model):
     
     counter_type = models.CharField(max_length=16, primary_key=True, unique=True)
@@ -183,8 +184,8 @@ class TempInputDB(models.Model):
     invoice_no = models.CharField(max_length=16)
     product = models.CharField(max_length=16)
     quantity = models.IntegerField()
-    unit_price = models.FloatField()
-    discount = models.FloatField()
+    unit_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
     
     def __str__(self):
         
@@ -196,8 +197,8 @@ class TempOutputDB(models.Model):
     invoice_no = models.CharField(max_length=16)
     product = models.CharField(max_length=16)
     quantity = models.IntegerField()
-    sale_price = models.FloatField()
-    discount = models.FloatField()
+    sale_price = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
             
