@@ -173,7 +173,7 @@
                     <!-- product unit -->
                     <div class="col mt-2">
                         <label for="product-unit" class="form-label">จำนวน</label>
-                        <input type="number" class="form-control" id="product-unit" min="0" required v-model="unit"
+                        <input type="number" class="form-control" id="product-unit" min=" 0" required v-model="unit"
                             :class="{ 'is-invalid': !unit_isValid }">
 
                     </div>
@@ -241,11 +241,11 @@
                             <td>[{ index+1 }]</td>
                             <td>[{ item.product_name }]</td>
                             <td>[{ item.product_type }]</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>[{ item.product_detail }]</td>
+                            <td>[{ item.cost }]</td>
+                            <td>[{ item.price }]</td>
+                            <td>[{ item.unit }]</td>
+                            <td>[{ item.discount }]</td>
                         </tr>
                     </tbody>
                 </table>
@@ -302,7 +302,7 @@
                             <button type="button" class="btn btn-danger mx-1 text-white w-100">
                                 ยกเลิก
                             </button>
-                            <button type="button" class="btn btn-success w-100">
+                            <button type="button" class="btn btn-success w-100" @click="onSaveData($event)">
                                 บันทึก
                             </button>
                         </div>
@@ -339,7 +339,7 @@
                 cost: 0,
                 price: 0,
                 unit: 0,
-                total: 0,
+                total: (this.price),
                 discount: 0,
                 final_total: 0,
 
@@ -368,6 +368,11 @@
         },
 
         methods: {
+            setAmount() {
+                this.total = this.unit * this.price;
+                this.final_total = this.total - discount;
+
+            },
             showShopData(e) {
                 e.preventDefault();
                 if (this.show_shop) {
@@ -423,6 +428,7 @@
                         product_name: this.product_name,
                         product_detail: this.product_detail,
                         product_type: this.product_type,
+                        cost: this.cost,
                         price: this.price,
                         unit: this.unit,
                         total: this.total,
@@ -441,18 +447,11 @@
                         this.discount = 0;
                         this.total_price = 0;
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!',
-                            footer: '<a href="">Why do I have this issue?</a>'
-                        });
                     }
                     catch (error) {
                         console.error(err);
 
                     }
-
                 }
             },
 
@@ -477,7 +476,6 @@
 
                 this.product_list.splice(index, 1);
                 this.index_selector = null;
-                
 
                 this.product_name = "";
                 this.product_type = "";
@@ -491,26 +489,33 @@
             },
 
             editProduct() {
-                let index = this.index_selector;
+                try {
 
-                this.product_list[index].product_name = this.product_name;
-                this.product_list[index].product_type = this.product_type;
-                this.product_list[index].product_detail = this.product_detail;
-                this.product_list[index].price = this.price;
-                this.product_list[index].unit = this.unit;
-                this.product_list[index].total = this.total;
-                this.product_list[index].discount = this.discount;
-                this.product_list[index].total_price = this.total_price;
+                    let index = this.index_selector;
 
-                this.product_type = "";
-                this.product_name = "";
-                this.product_detail = "";
-                this.cost = 0;
-                this.price = 0;
-                this.unit = 0;
-                this.total = 0;
-                this.discount = 0;
-                this.total_price = 0;
+                    this.product_list[index].product_name = this.product_name;
+                    this.product_list[index].product_type = this.product_type;
+                    this.product_list[index].product_detail = this.product_detail;
+                    this.product_list[index].price = this.price;
+                    this.product_list[index].unit = this.unit;
+                    this.product_list[index].total = this.total;
+                    this.product_list[index].discount = this.discount;
+                    this.product_list[index].total_price = this.total_price;
+
+                    this.product_type = "";
+                    this.product_name = "";
+                    this.product_detail = "";
+                    this.cost = 0;
+                    this.price = 0;
+                    this.unit = 0;
+                    this.total = 0;
+                    this.discount = 0;
+                    this.total_price = 0;
+                }
+                catch {
+
+                }
+                
             },
 
             onSaveData(e) {
@@ -522,22 +527,23 @@
                     this.isValid = false;
                 }
 
-                if (this.isValid){
+                if (this.isValid) {
                     const data = JSON.stringify(Object.assign({}, this.product_list));
                     const form_data = new FormData();
                     form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
                     form_data.append('products', data);
-                    
+                    form_data.append("remark", '-')
+
                     axios
                         .post("{% url 'create-InputData-api' %}", form_data)
                         .then((response) => {
                             if (response.data['status']) {
                                 this.product_list = new Array();
-                                alert("บันทึกข้อมูลสำเร็จ")
+                                alert("บันทึกข้อมูลสำเร็จ");
                             }
                             else {
                                 this.product_list = new Array();
-                                
+
                             }
                         });
                 }

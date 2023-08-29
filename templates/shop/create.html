@@ -290,8 +290,9 @@
                     }
 
 
-
+                    console.log("ll*")
                     if (this.isValid) {
+                        console.log("ll")
                         const form_data = new FormData();
 
                         form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
@@ -312,17 +313,29 @@
                         form_data.append("remark", this.remark);
 
                         axios
-                         .post("{% url 'create-shop-api' %}", form_data)
-                         .then((response)=>{
-                            if(response.data['status']){
-                                alert('success')
-                                setTimeout(2000)
-                                location.replace('/')
-                            }
-                            else {
-                                alert(response.data['message']);
-                            }
-                         })
+                            .post("{% url 'create-shop-api' %}", form_data)
+                            .then((response)=>{
+                                if(response.data['status']){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Successfully',
+                                        text: 'User has create!',
+                                        
+                                    })
+                                    setTimeout(2000)
+                                    location.replace('/')
+                                }
+                                else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: `${ response.data["message"] }`,
+                                        
+                                    })
+                                }
+                            })
+                         
+                        
                     }
                 }
             }

@@ -8,37 +8,49 @@ STATUS = (
     )
 
 # ระเบียนข้อมูลคงคลัง
-class ProductData(models.Model):
+class ProductTypeData(models.Model):
+    type_id = models.AutoField(primary_key=True, unique=True)
+    type_code = models.CharField(max_length=256, null=True)
+    type_name = models.CharField(max_length=128)
     
+    def __str__(self):
+        
+        return f"{self.type_name}"
+    
+
+class ProductCategory(models.Model):
+    category = models.CharField(max_length=128)
+    
+    def __str__(self):
+        return self.category
+
+class ProductData(models.Model):
+
     product_id = models.AutoField(primary_key=True, unique=True)
     product_code = models.CharField(max_length=16, unique=True, null=True)
     product_name = models.CharField(max_length=256)
     product_price = models.DecimalField(max_digits=8, decimal_places=2)
     product_desc = models.TextField(default="-")
-    unit_cost = models.DecimalField(max_digits=8, decimal_places=2)
+    product_unit = models.IntegerField(default=1)
+    product_cost = models.DecimalField(max_digits=8, decimal_places=2)
+    product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, null=True)
     
     add_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         
         return f"{self.product_code} {self.product_name}"
-    
-class ProductTypeData(models.Model):
-    
-    type_id = models.AutoField(primary_key=True, unique=True)
-    type_code = models.CharField(max_length=256)
-    type_name = models.CharField(max_length=128)
-    
-    def __str__(self):
-        
-        return f"{self.type_code} {self.type_name}"
+
+class ProductImage(models.Model):
+    image = models.ImageField(upload_to='products')
+    product = models.ForeignKey(ProductData, on_delete=models.CASCADE)
+    upload_date = models.DateTimeField(auto_now_add=True)
     
 class ProductDelete(models.Model):
     
     product = models.ForeignKey(ProductData, on_delete=models.CASCADE)
     product_code = models.CharField(max_length=16)
     del_unit = models.IntegerField()
-    
     del_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -50,17 +62,16 @@ class AreaData(models.Model):
     
     area_id = models.AutoField(primary_key=True, unique=True)
     area_name = models.CharField(max_length=128)
-    
-    
-   
+
 class ShopData(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_status = models.IntegerField(choices=STATUS)
+    
     shop_id = models.AutoField(primary_key=True, unique=True)
     shop_code = models.CharField(max_length=16, unique=True, null=True)
-    shop_name = models.CharField(max_length=128)
-    shop_product_type = models.CharField(max_length=32)
+    shop_name = models.CharField(max_length=256)
+    shop_product_type = models.ForeignKey(ProductTypeData, on_delete=models.PROTECT)
     shop_contact = models.CharField(max_length=64)
     shop_post_code = models.CharField(max_length=5)
     shop_province = models.CharField(max_length=256)
@@ -72,6 +83,9 @@ class ShopData(models.Model):
     shop_fax = models.CharField(max_length=10)
     shop_email = models.CharField(max_length=64)
     shop_remark = models.TextField(default="-")
+    
+    shop_latitude = models.FloatField(null=True, blank=True)
+    shop_longitude = models.FloatField(null=True, blank=True)
     
     add_date = models.DateTimeField(auto_now_add=True)
     
@@ -114,7 +128,6 @@ class InputInvoice(models.Model):
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     discount = models.DecimalField(max_digits=8, decimal_places=2)
     remark = models.TextField(default="-")
-    
     input_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -144,7 +157,6 @@ class OutputInvoice(models.Model):
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     discount = models.DecimalField(max_digits=8, decimal_places=2)
     remark = models.TextField(default="-")
-    
     input_date = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -201,5 +213,5 @@ class TempOutputDB(models.Model):
     discount = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-            
+        
             return self.invoice_no

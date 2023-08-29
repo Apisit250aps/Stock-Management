@@ -1,0 +1,213 @@
+{% extends 'shop/index.html' %}
+{% load static %}
+{% block main %}
+<main id="app" class=" container">
+    <form action="" class=" py-5">
+        <!-- header -->
+        <div class="row row-cols-1 m-auto">
+            <div class="col">
+                <h1 class="text-center">ลงทะเบียนผลิต</h1>
+            </div>
+
+        </div>
+        <!-- end header -->
+        <hr>
+        <!-- User Data -->
+        <div class="row row-cols-1 m-auto border rounded-3 py-2 ">
+            <div class="col mt-1">
+                <div class="d-flex flex-row align-items-center justify-content-between">
+                    <h3>ข้อมูลผู้ใช้</h3>
+                    <button class="btn" type="button" @click="showUserData($event)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-dash-square-dotted" viewBox="0 0 16 16">
+                            <path
+                                d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834 0h.916v-1h-.916v1zm1.833 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                        </svg>
+                    </button>
+                </div>
+                <hr>
+            </div>
+            <div class="row row-cols-1 row-cols-lg-2 m-auto" v-show="user_data">
+                <div class="col mt-2">
+
+                    <label for="fname" class="form-label">ชื่อ</label>
+                    <input type="text" class="form-control " :class="{'is-invalid':!fname_isValid}" id="fname" required
+                        v-model.trim="fname">
+                    <small></small>
+                </div>
+                <div class="col mt-2">
+
+                    <label for="lname" class="form-label">นามสกุล</label>
+                    <input type="text" class="form-control " :class="{'is-invalid':!lname_isValid}" id="lname" required
+                        v-model.trim="lname">
+
+                    <small></small>
+                </div>
+                <!-- Username -->
+                <div class="col mt-2">
+
+                    <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                    <input type="text" class="form-control " :class="{ 'is-invalid':!username_isValid }" id="username"
+                        required v-model.trim="username">
+
+                    <small></small>
+                </div>
+                <!-- Email -->
+                <div class="col mt-2">
+
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="email" class="form-control " :class="{ 'is-invalid':!email_isValid }" id="email"
+                        required v-model.trim="email">
+
+                    <small></small>
+                </div>
+                <!-- Password -->
+                <div class="col mt-2">
+
+                    <label for="password" class="form-label">ตั้งรหัสผ่าน</label>
+                    <input type="password" class="form-control " :class="{ 'is-invalid':!password_isValid }"
+                        id="password" required v-model.trim="password">
+
+                    <small class="invalid-feedback">[{ password_err_msg }]</small>
+                </div>
+                <!-- Confirm -->
+                <div class="col mt-2">
+
+                    <label for="confirm" class="form-label">ยืนยันรหัสผ่าน</label>
+                    <input type="password" class="form-control " :class="{ 'is-invalid':!password_isValid }"
+                        id="confirm" required v-model.trim="confirm">
+                    <small class="invalid-feedback">[{ password_err_msg }]</small>
+                </div>
+
+            </div>
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <hr>
+                    <div class="d-flex flex-row justify-content-end align-content-end">
+                        <button class="btn btn-outline-success" type="button" @click="userCheck($event)">
+                            ตรวจสอบ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <hr>
+        <!-- Shop Data -->
+        <div class="row row-cols-1  m-auto border rounded-3 py-2">
+            <div class="col mt-1">
+                <!-- header -->
+                <div class="d-flex flex-row align-items-center justify-content-between">
+                    <h3>ข้อมูลผู้ผลิต</h3>
+
+                </div>
+                <hr>
+                <!-- end header -->
+                <!-- form -->
+                <div class="row row-cols-1 row-cols-lg-2 m-auto">
+                    <div class="col mt-2">
+
+                        <label for="shop_name" class="form-label">ผู้ผลิต</label>
+                        <input type="text" class="form-control " id="shop_name" required v-model.trim="shop_name">
+
+                        <small></small>
+                    </div>
+                    <div class="col mt-2">
+
+                        <label for="shop_product_type" class="form-label">ประเภทสินค้า</label>
+                        <input type="text" class="form-control " id="shop_product_type" required
+                            v-model.trim="shop_product_type">
+
+                        <small></small>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-2 m-auto">
+                    <div class="col mt-2">
+                        <label for="shop_tel" class="form-label">โทรศัพท์</label>
+                        <input type="text" class="form-control " id="shop_tel" required v-model.trim="shop_tel">
+                        <small></small>
+                    </div>
+                    <div class="col mt-2">
+                        <label for="shop_fax" class="form-label">แฟกซ์</label>
+                        <input type="text" class="form-control " id="shop_fax" required v-model.trim="shop_fax">
+                        <small></small>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-1 m-auto">
+                    <div class="col">
+
+                        <label for="remark" class="form-label">หมายเหตุ</label>
+                        <input type="text" class="form-control " id="remark" required v-model.trim="shop_remark">
+
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-2 m-auto">
+                    <div class="col my-2">
+                        <label for="province" class="form-label">จังหวัด</label>
+                        <select class="form-select" id="province" @change="onProvinceChange()" v-model="shop_province"
+                            aria-describedby="provinceFeedback" required>
+                            <option selected disabled value="">เลือก</option>
+                            <option v-for="item in province_list" :value="item">[{item}]</option>
+                        </select>
+                    </div>
+                    <div class="col my-2">
+                        <label for="district" class="form-label">อำเภอ</label>
+                        <select class="form-select" id="district" v-model="shop_district"
+                            aria-describedby="districtFeedback" required>
+                            <option selected disabled value="">เลือก</option>
+                            <option v-for="item in district_list" :value="item">[{item}]</option>
+                        </select>
+                    </div>
+                    <div class="col my-2">
+                        <label for="sub_district" class="form-label">ตำบล</label>
+                        <select class="form-select " id="sub_district" v-model="shop_sub_district"
+                            aria-describedby="sub_districtFeedback" required>
+                            <option selected disabled value="">เลือก</option>
+                            <option>...</option>
+                        </select>
+                    </div>
+                    <div class="col mt-2">
+                        <label for="shop_post_id" class="form-label">รหัสไปรษณีย์</label>
+                        <input type="text" class="form-control " id="shop_post_id" required v-model.trim="shop_post_id">
+                        <small></small>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-lg-1 m-auto">
+                    <div class="col mt-2">
+                        <label for="detail_address" class="form-label">รายละเอียด</label>
+                        <textarea class="form-control" id="detail_address" placeholder="บ้านเลขที่ ซอย "
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a message in the textarea.
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 m-auto">
+                    <div class="col">
+                        <hr>
+                        <div class="d-flex flex-row justify-content-end align-content-end">
+                            <button class="btn btn-outline-success" type="button" @click="">
+                                ลงทะเบียน
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </form>
+</main>
+<!-- url scripts -->
+<script>
+    
+const user_check_api = "{% url 'user-check-api' %}";
+const get_province_api = "{% url 'get-province' %}";
+const get_district_api = "{% url 'get-district' %}";
+const get_subDistrict_api = "{% url 'get-subDistrict' %}";
+const csrf_token = "{% csrf_token %}";
+
+</script>
+<script src="{% static 'vue/create_shop.js' %}"></script>
+{% endblock main %}

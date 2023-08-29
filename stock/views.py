@@ -19,6 +19,35 @@ from . import serializers
 # Create your views here.
 
 @csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def userCheck(request):
+    status = True
+    message = ""
+
+    username = request.data['username']
+    email = request.data['email']
+    try :
+        
+    
+        if User.objects.filter(username=username).count() != 0:
+            status =False
+            message = "username"
+        elif User.objects.filter(email=email).count() != 0:
+            status = False
+            message = "email"
+    except Exception as err :
+        print(err)
+        pass
+    
+    return Response(
+        {
+            "status":status,
+            "message":message
+        }
+    )
+
+@csrf_exempt
 @api_view(["GET", ])
 @permission_classes((AllowAny,))
 def get_user(request):
@@ -35,7 +64,7 @@ def get_user(request):
 
 
 @csrf_exempt
-@api_view(["GET", ])
+@api_view(["GET"])
 @permission_classes((AllowAny,))
 def getProvince(request):
     data = {}
@@ -106,14 +135,13 @@ def getTambon(request):
         }
     )
 
-
 @require_POST
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def createInputData(request):
     obj_string = request.POST['products']
-    user_id = request.data['user']
+    user_id = request.session['_auth_user_id']
     remark = request.data['remark']
     user = User.objects.get(id=user_id)
     object_product = json.loads(obj_string)
@@ -123,7 +151,7 @@ def createInputData(request):
     discount = 0
 
     status = True
-    
+
     for i, o in dict(object_product).items():
         pro = {}
         for x, y in o.items():
@@ -167,7 +195,8 @@ def createInputData(request):
         for product in products:
             product_name = product['product_name']
             product_desc = product['product_detail']
-            product_cost = product['price']
+            product_price = product['price']
+            product_cost = product['cost']
             product_unit = product['unit']
             product_disc = product['discount']
 
@@ -178,14 +207,18 @@ def createInputData(request):
                 _product = models.ProductData.objects.create(
                     product_id=100000,
                     product_name=product_name,
-                    unit_cost=product_cost,
-                    product_desc=product_desc
+                    product_cost=product_cost,
+                    product_unit=product_unit,
+                    product_desc=product_desc,
+                    product_price=product_price
                 )
             else:
                 _product = models.ProductData.objects.create(
                     product_name=product_name,
-                    unit_cost=product_cost,
-                    product_desc=product_desc
+                    product_cost=product_cost,
+                    product_unit=product_unit,
+                    product_desc=product_desc,
+                    product_price=product_price
                 )
 
             models.ProductData.objects.filter(product_id=_product.product_id).update(
@@ -216,7 +249,7 @@ def createInputData(request):
                 discount=product_disc,
                 unit_price=product_cost
             )
-            
+
     except TypeError as err:
         print(err)
         status = False
@@ -231,81 +264,90 @@ def createInputData(request):
 @permission_classes((AllowAny,))
 def createShop(request):
     data = request.data
-
     status = True
-    _username = data['username']
-    _password = data['password']
-    _shop_name = data['shop_name']
-    _product_type = data['product_type']
-    _contact = data['contact']
-    _province = data['province']
-    _district = data['district']
-    _subDistrict = data['sub_district']
-    _post_id = data['post_id']
-    _detail_address = data['detail_address']
-    _tel = data['tel']
-    _fax = data['fax']
-    _email = data['email']
-    _remark = data['remark']
+    fname = data['fname']
+    lname = data['lname']
+    username = data['username']
+    password = data['password']
+    email = data['email']
+    shop_name = data['shop_name']
+    shop_product_type = data['product_type']
+    shop_contact = f"{fname} {lname}"
+    shop_province = data['province']
+    shop_district = data['district']
+    shop_subdistrict = data['sub_district']
+    shop_post_id = data['post_id']
+    shop_address = data['detail_address']
+    shop_tel = data['tel']
+    shop_fax = data['fax']
+    shop_email = email
+    shop_remark = data['remark']
 
-    if User.objects.filter(username=_username).count() != 0:
+    if User.objects.filter(username=username).count() != 0:
         return Response({"status": False, "message": 'มีชื่อผู้ใช้นี้แล้ว'})
 
     try:
-        _user = User.objects.create_user(
-            email=_email,
-            username=_username,
-            password=_password
-        )
-        if _user:
-
+        # create user on main user >>>
+        user = User.objects.create_user(username=username, password=password, email=email, firs_name=fname, last_name=lname)
+        if user:
+            # check shop product type >>>
+            if models.ProductTypeData.objects.filter(type_name=shop_product_type).count() == 0:
+                shop_product_type = models.ProductTypeData.objects.create(
+                    type_name=shop_product_type)
+            else:
+                shop_product_type = models.ProductTypeData.objects.get(
+                    type_name=shop_product_type)
+            
+            # create shop data 
             if models.ShopData.objects.all().count() == 0:
-                shop_id = 10000
-
-                shop = models.ShopData.objects.create(
-                    user=_user,
+                shop_id = 10001
+                shop_create = models.ShopData.objects.create(
+                    user=user,
                     user_status=1,
                     shop_id=shop_id,
-                    shop_name=_shop_name,
-                    shop_product_type=_product_type,
-                    shop_contact=_contact,
-                    shop_post_code=_post_id,
-                    shop_province=_province,
-                    shop_district=_district,
-                    shop_subdistrict=_subDistrict,
-                    shop_detail_address=_detail_address,
-                    shop_tel=_tel,
-                    shop_fax=_fax,
-                    shop_email=_email,
-                    shop_remark=_remark
+                    shop_name=shop_name,
+                    shop_product_type=shop_product_type,
+                    shop_contact=shop_contact,
+                    shop_province=shop_province,
+                    shop_district=shop_district,
+                    shop_subdistrict=shop_subdistrict,
+                    shop_detail_address = shop_address,
+                    shop_tel=shop_tel,
+                    shop_post_code=shop_post_id,
+                    shop_fax=shop_fax,
+                    shop_email=shop_email,
+                    shop_remark=shop_remark
                 )
-
-            else:
-
-                shop = models.ShopData.objects.create(
-                    user=_user,
+            else :
+                shop_create = models.ShopData.objects.create(
+                    user=user,
                     user_status=1,
-                    shop_name=_shop_name,
-                    shop_product_type=_product_type,
-                    shop_contact=_contact,
-                    shop_post_code=_post_id,
-                    shop_province=_province,
-                    shop_district=_district,
-                    shop_subdistrict=_subDistrict,
-                    shop_detail_address=_detail_address,
-                    shop_tel=_tel,
-                    shop_fax=_fax,
-                    shop_email=_email,
-                    # shop_remark = _remark
+                    shop_name=shop_name,
+                    shop_product_type=shop_product_type,
+                    shop_contact=shop_contact,
+                    shop_province=shop_province,
+                    shop_district=shop_district,
+                    shop_subdistrict=shop_subdistrict,
+                    shop_detail_address = shop_address,
+                    shop_tel=shop_tel,
+                    shop_post_code=shop_post_id,
+                    shop_fax=shop_fax,
+                    shop_email=shop_email,
+                    shop_remark=shop_remark
                 )
-
-            models.ShopData.objects.filter(shop_id=shop.shop_id).update(
-                shop_code=f"S{shop.shop_id}")
-
-    except TypeError as err:
-
-        status = False
+            
+            models.ShopData.objects.filter(shop_id=shop_create.shop_id).update(shop_code=f"S{shop_create.shop_id}")
+            
+            if shop_create:
+                status = True
+                
+            
+            
+                    
+    except Exception as err:
         print(err)
+        status = False
+        User.objects.get(id=user.id).delete()
 
     return Response(
         {
@@ -360,13 +402,18 @@ def getAllProduct(request):
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["GET",])
 @permission_classes((AllowAny,))
 def getAllShop(request):
     status = True
 
     shop_data = models.ShopData.objects.all()
     shop = serializers.ShopDataSerializer(shop_data, many=True).data
+    shop_all = []
+    for item in shop:
+        item['user'] = User.objects.get(id=item['user']).username
+        item['shop_product_type'] = models.ProductTypeData.objects.get(type_id=item["shop_product_type"]).type_name
+        shop_all.append(item)
 
     return Response(
         {
@@ -407,7 +454,6 @@ def editProduct(request):
         }
     )
 
-
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -420,7 +466,6 @@ def deleteProduct(request):
             "status": True
         }
     )
-
 
 @csrf_exempt
 @api_view(["POST"])

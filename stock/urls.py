@@ -2,9 +2,9 @@ from django.urls import path
 from . import views as api
 
 urlpatterns = [
-    path('get/province/', api.getProvince, name='get-province'),
-    path('get/district/', api.getDistrict, name='get-district'),
-    path('get/sub-district/', api.getTambon, name='get-subDistrict'),
+    path('get/province', api.getProvince, name='get-province'),
+    path('get/district', api.getDistrict, name='get-district'),
+    path('get/sub-district', api.getTambon, name='get-subDistrict'),
     
     path('get/user/id', api.get_user, name='get-user-id'),
     
@@ -23,6 +23,8 @@ urlpatterns = [
     
     path('delete/product/', api.deleteProduct, name='delete-product-api'),
     path('delete/shop/', api.deleteShop, name='delete-shop-api'),
+    
+    path("user-check", api.userCheck, name='user-check-api')
     
     
     
