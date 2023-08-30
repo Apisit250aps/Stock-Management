@@ -27,6 +27,7 @@ class ProductDataAdmin(admin.ModelAdmin):
     list_display = [
         'product_code',
         'product_name'
+        
     ]
     
     search_fields = [
@@ -42,3 +43,11 @@ class ShopDataAdmin(admin.ModelAdmin):
     ]
     
     search_fields = list_display
+    
+@admin.register(models.InputInvoice)
+class InputInvoiceAdmin(admin.ModelAdmin):
+    list_display = [
+        'invoice_no',
+        'shop',
+        'input_date'
+    ]

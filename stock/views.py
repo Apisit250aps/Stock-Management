@@ -18,8 +18,9 @@ from . import serializers
 
 # Create your views here.
 
+
 @csrf_exempt
-@api_view(["POST"])
+@api_view(["POST", ])
 @permission_classes((AllowAny,))
 def userCheck(request):
     status = True
@@ -27,25 +28,26 @@ def userCheck(request):
 
     username = request.data['username']
     email = request.data['email']
-    try :
-        
-    
+    try:
+
         if User.objects.filter(username=username).count() != 0:
-            status =False
+            status = False
             message = "username"
         elif User.objects.filter(email=email).count() != 0:
             status = False
             message = "email"
-    except Exception as err :
+    except Exception as err:
+        print("erer")
         print(err)
         pass
-    
+
     return Response(
         {
-            "status":status,
-            "message":message
+            "status": status,
+            "message": message
         }
     )
+
 
 @csrf_exempt
 @api_view(["GET", ])
@@ -134,6 +136,7 @@ def getTambon(request):
             'data': data['tambon']
         }
     )
+
 
 @require_POST
 @csrf_exempt
@@ -288,7 +291,8 @@ def createShop(request):
 
     try:
         # create user on main user >>>
-        user = User.objects.create_user(username=username, password=password, email=email, firs_name=fname, last_name=lname)
+        user = User.objects.create_user(
+            username=username, password=password, email=email, first_name=fname, last_name=lname)
         if user:
             # check shop product type >>>
             if models.ProductTypeData.objects.filter(type_name=shop_product_type).count() == 0:
@@ -297,8 +301,8 @@ def createShop(request):
             else:
                 shop_product_type = models.ProductTypeData.objects.get(
                     type_name=shop_product_type)
-            
-            # create shop data 
+
+            # create shop data
             if models.ShopData.objects.all().count() == 0:
                 shop_id = 10001
                 shop_create = models.ShopData.objects.create(
@@ -311,14 +315,14 @@ def createShop(request):
                     shop_province=shop_province,
                     shop_district=shop_district,
                     shop_subdistrict=shop_subdistrict,
-                    shop_detail_address = shop_address,
+                    shop_detail_address=shop_address,
                     shop_tel=shop_tel,
                     shop_post_code=shop_post_id,
                     shop_fax=shop_fax,
                     shop_email=shop_email,
                     shop_remark=shop_remark
                 )
-            else :
+            else:
                 shop_create = models.ShopData.objects.create(
                     user=user,
                     user_status=1,
@@ -328,22 +332,20 @@ def createShop(request):
                     shop_province=shop_province,
                     shop_district=shop_district,
                     shop_subdistrict=shop_subdistrict,
-                    shop_detail_address = shop_address,
+                    shop_detail_address=shop_address,
                     shop_tel=shop_tel,
                     shop_post_code=shop_post_id,
                     shop_fax=shop_fax,
                     shop_email=shop_email,
                     shop_remark=shop_remark
                 )
-            
-            models.ShopData.objects.filter(shop_id=shop_create.shop_id).update(shop_code=f"S{shop_create.shop_id}")
-            
+
+            models.ShopData.objects.filter(shop_id=shop_create.shop_id).update(
+                shop_code=f"S{shop_create.shop_id}")
+
             if shop_create:
                 status = True
-                
-            
-            
-                    
+
     except Exception as err:
         print(err)
         status = False
@@ -412,7 +414,8 @@ def getAllShop(request):
     shop_all = []
     for item in shop:
         item['user'] = User.objects.get(id=item['user']).username
-        item['shop_product_type'] = models.ProductTypeData.objects.get(type_id=item["shop_product_type"]).type_name
+        item['shop_product_type'] = models.ProductTypeData.objects.get(
+            type_id=item["shop_product_type"]).type_name
         shop_all.append(item)
 
     return Response(
@@ -454,6 +457,7 @@ def editProduct(request):
         }
     )
 
+
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -466,6 +470,7 @@ def deleteProduct(request):
             "status": True
         }
     )
+
 
 @csrf_exempt
 @api_view(["POST"])

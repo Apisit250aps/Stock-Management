@@ -152,7 +152,7 @@
                     </div>
                     <div class="col my-2">
                         <label for="district" class="form-label">อำเภอ</label>
-                        <select class="form-select" id="district" v-model="shop_district"
+                        <select class="form-select" id="district" @change="onDistrictChange()" v-model="shop_district"
                             aria-describedby="districtFeedback" required>
                             <option selected disabled value="">เลือก</option>
                             <option v-for="item in district_list" :value="item">[{item}]</option>
@@ -163,7 +163,7 @@
                         <select class="form-select " id="sub_district" v-model="shop_sub_district"
                             aria-describedby="sub_districtFeedback" required>
                             <option selected disabled value="">เลือก</option>
-                            <option>...</option>
+                            <option v-for="item in sub_district_list" :value="item">[{item}]</option>
                         </select>
                     </div>
                     <div class="col mt-2">
@@ -175,7 +175,7 @@
                 <div class="row row-cols-1 row-cols-lg-1 m-auto">
                     <div class="col mt-2">
                         <label for="detail_address" class="form-label">รายละเอียด</label>
-                        <textarea class="form-control" id="detail_address" placeholder="บ้านเลขที่ ซอย "
+                        <textarea class="form-control" v-model="shop_address" id="detail_address" placeholder="บ้านเลขที่ ซอย "
                             required></textarea>
                         <div class="invalid-feedback">
                             Please enter a message in the textarea.
@@ -186,7 +186,7 @@
                     <div class="col">
                         <hr>
                         <div class="d-flex flex-row justify-content-end align-content-end">
-                            <button class="btn btn-outline-success" type="button" @click="">
+                            <button class="btn btn-outline-success" type="submit" @click="onSubmit($event)">
                                 ลงทะเบียน
                             </button>
                         </div>
@@ -201,13 +201,298 @@
 </main>
 <!-- url scripts -->
 <script>
-    
-const user_check_api = "{% url 'user-check-api' %}";
-const get_province_api = "{% url 'get-province' %}";
-const get_district_api = "{% url 'get-district' %}";
-const get_subDistrict_api = "{% url 'get-subDistrict' %}";
-const csrf_token = "{% csrf_token %}";
+    const { createApp, ref } = Vue;
+
+    const host = `http://127.0.0.1:8000/`;
+    const token = '';
+    const check_user_api = '';
+
+
+
+    const App = createApp({
+        delimiters: ["[{", "}]"],
+        data() {
+            return {
+                fname: "",
+                lname: "",
+                username: "",
+                email: "",
+                password: "",
+                confirm: "",
+
+                shop_name: "",
+                shop_product_type: "",
+                shop_address: "",
+                shop_sub_district: "",
+                shop_district: "",
+                shop_province: "",
+                shop_post_id: "",
+                shop_remark: "",
+                shop_tel: "",
+                shop_fax: "",
+
+                shop_name_isValid: true,
+                shop_product_type_isValid: true,
+                shop_address_isValid: true,
+                shop_sub_district_isValid: true,
+                shop_district_isValid: true,
+                shop_province_isValid: true,
+                shop_post_id_isValid: true,
+                shop_remark_isValid: true,
+                shop_tel_isValid: true,
+                shop_fax_isValid: true,
+
+                user_isValid: true,
+                isValid: true,
+
+                user_data: true,
+
+                password_err_msg: "",
+
+                username_isValid: true,
+                email_isValid: true,
+                fname_isValid: true,
+                lname_isValid: true,
+                password_isValid: true,
+
+
+                province_list: null,
+                district_list: null,
+                sub_district_list: null,
+
+            };
+        },
+        computed: {},
+        mounted() {
+            try {
+                axios
+                    .get("{% url 'get-province' %}")
+                    .then((res) => {
+                        this.province_list = res.data['data'];
+                    });
+            }
+            catch (err) {
+                console.error(err);
+            }
+
+
+            console.log("loaded!");
+        },
+        methods: {
+            onProvinceChange() {
+                const form_data = new FormData;
+                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                form_data.append("province", this.shop_province);
+                axios
+                    .post("{% url 'get-district' %}", form_data)
+                    .then((res) => {
+                        this.district_list = res.data['data'];
+                    });
+
+            },
+            onDistrictChange() {
+                const form_data = new FormData;
+                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                form_data.append("district", this.shop_district);
+                form_data.append("province", this.shop_province);
+                axios
+                    .post("{% url 'get-subDistrict' %}", form_data)
+                    .then((res) => {
+                        this.sub_district_list = res.data['data'];
+                    });
+
+            },
+
+            showUserData(e) {
+                e.preventDefault();
+
+                if (this.user_data) {
+                    this.user_data = false;
+                } else {
+                    this.user_data = true;
+                }
+            },
+            userCheck(e) {
+                e.preventDefault();
+
+                var isValid = true;
+
+                this.fname_isValid = true;
+                if (this.fname == "") {
+                    this.fname_isValid = false;
+                    isValid = false;
+                }
+
+                this.lname_isValid = true;
+                if (this.lname == "") {
+                    this.lname_isValid = false;
+                    isValid = false;
+                }
+
+                this.username_isValid = true;
+                if (this.username == "") {
+                    isValid = false;
+                    this.username_isValid = false;
+                }
+
+                this.email_isValid = true;
+                if (this.email == "") {
+                    isValid = false;
+                    this.email_isValid = false;
+                }
+
+                this.password_isValid = true;
+                if (this.password.length < 8) {
+                    this.password_err_msg = "รหัสสั้นเกินไป";
+                    this.password_isValid = false;
+                    isValid = false;
+                }
+                else {
+                    if (this.password !== this.confirm) {
+                        this.password_err_msg = "รหัสผ่านไม่ตรงกัน";
+                        this.password_isValid = false;
+                        isValid = false;
+                    }
+                }
+
+                if (isValid) {
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append("fname", this.fname);
+                    form_data.append("lname", this.lname);
+                    form_data.append("username", this.username);
+                    form_data.append("email", this.email);
+
+                    axios
+                        .post("{% url 'user-check-api' %}", form_data)
+                        .then((response) => {
+                            console.log(response.data);
+                            if (response.data['status']) {
+                                this.user_isValid = true;
+
+                            }
+                            else {
+                                this.user_isValid = false;
+                                switch (response.data['message']) {
+                                    case "email":
+                                        this.email_isValid = false;
+                                        break;
+                                    case "username":
+                                        this.username_isValid = false;
+                                        break;
+                                }
+                            }
+                        });
+
+                }
+            },
+            onSubmit(e) {
+                console.log("press")
+                e.preventDefault();
+
+                this.isValid = true;
+
+                this.shop_name_isValid = true;
+                if (this.shop_name == "") {
+                    this.shop_name_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_product_type_isValid = true;
+                if (this.shop_product_type == "") {
+                    this.shop_product_type_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_address_isValid = true;
+                if (this.shop_address == "") {
+                    this.shop_address_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_sub_district_isValid = true;
+                if (this.shop_sub_district == "") {
+                    this.shop_sub_district_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_district_isValid = true;
+                if (this.shop_district == "") {
+                    this.shop_district_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_province_isValid = true;
+                if (this.shop_province == "") {
+                    this.shop_province_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_post_id_isValid = true;
+                if (this.shop_post_id == "") {
+                    this.shop_post_id_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_remark_isValid = true;
+                if (this.shop_remark == "") {
+                    this.shop_remark_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_tel_isValid = true;
+                if (this.shop_tel == "") {
+                    this.shop_tel_isValid = false;
+                    this.isValid = false;
+                }
+                this.shop_fax_isValid = true;
+                if (this.shop_fax == "") {
+                    this.shop_fax_isValid = false;
+                    this.isValid = false;
+                }
+
+                if (!this.user_isValid) {
+                    this.isValid = false;
+                }
+
+                if (this.isValid) {
+                    console.log("sending!")
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append("fname", this.fname);
+                    form_data.append("lname", this.lname);
+                    form_data.append("username", this.username);
+                    form_data.append("email", this.email);
+                    form_data.append("password", this.password);
+                    form_data.append("shop_name", this.shop_name);
+                    form_data.append("product_type", this.shop_product_type);
+                    form_data.append("detail_address", this.shop_address);
+                    form_data.append("sub_district", this.shop_sub_district);
+                    form_data.append("district", this.shop_district);
+                    form_data.append("province", this.shop_province);
+                    form_data.append("post_id", this.shop_post_id);
+                    form_data.append("remark", this.shop_remark);
+                    form_data.append("tel", this.shop_tel);
+                    form_data.append("fax", this.shop_fax);
+
+                    axios
+                        .post("{% url 'create-shop-api' %}", form_data)
+                        .then((response) => {
+                            if (response.data['status']) {
+                                Swal.fire(
+                                    'Create Shop!',
+                                    'Successfully!',
+                                    'success'
+                                );
+                                setTimeout(3000);
+                                location.replace("{% url 'homepage' %}");
+                            }
+                        });
+
+
+
+                }
+
+
+
+            }
+        },
+    });
+
+    App.mount("#app");
 
 </script>
-<script src="{% static 'vue/create_shop.js' %}"></script>
+
 {% endblock main %}
