@@ -1,498 +1,571 @@
-{% extends 'shop/index.html' %}
-{% load static %}
-{% block main %}
-<main id="app" class=" container">
-    <form action="" class=" py-5">
+{% extends 'shop/index.html' %} {% load static %} {% block main %}
+<main id="app" class="container">
+  <form action="" class="py-5">
+    <!-- header -->
+    <div class="row row-cols-1 m-auto">
+      <div class="col">
+        <h1 class="text-center">ลงทะเบียนผลิต</h1>
+      </div>
+    </div>
+    <!-- end header -->
+    <hr />
+    <!-- User Data -->
+    <div class="row row-cols-1 m-auto border rounded-3 py-2">
+      <div class="col mt-1">
+        <div class="d-flex flex-row align-items-center justify-content-between">
+          <h3>ข้อมูลผู้ใช้</h3>
+          <button class="btn" type="button" @click="showUserData($event)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-dash-square-dotted"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834 0h.916v-1h-.916v1zm1.833 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z"
+              />
+            </svg>
+          </button>
+        </div>
+        <hr />
+      </div>
+      <div class="row row-cols-1 row-cols-lg-2 m-auto" v-show="user_data">
+        <div class="col mt-2">
+          <label for="fname" class="form-label">ชื่อ</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="{'is-invalid':!fname_isValid}"
+            id="fname"
+            required
+            v-model.trim="fname"
+          />
+          <small></small>
+        </div>
+        <div class="col mt-2">
+          <label for="lname" class="form-label">นามสกุล</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="{'is-invalid':!lname_isValid}"
+            id="lname"
+            required
+            v-model.trim="lname"
+          />
+
+          <small></small>
+        </div>
+        <!-- Username -->
+        <div class="col mt-2">
+          <label for="username" class="form-label">ชื่อผู้ใช้</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="{ 'is-invalid':!username_isValid }"
+            id="username"
+            required
+            v-model.trim="username"
+          />
+
+          <small></small>
+        </div>
+        <!-- Email -->
+        <div class="col mt-2">
+          <label for="email" class="form-label">อีเมล</label>
+          <input
+            type="email"
+            class="form-control"
+            :class="{ 'is-invalid':!email_isValid }"
+            id="email"
+            required
+            v-model.trim="email"
+          />
+
+          <small></small>
+        </div>
+        <!-- Password -->
+        <div class="col mt-2">
+          <label for="password" class="form-label">ตั้งรหัสผ่าน</label>
+          <input
+            type="password"
+            class="form-control"
+            :class="{ 'is-invalid':!password_isValid }"
+            id="password"
+            required
+            v-model.trim="password"
+          />
+
+          <small class="invalid-feedback">[{ password_err_msg }]</small>
+        </div>
+        <!-- Confirm -->
+        <div class="col mt-2">
+          <label for="confirm" class="form-label">ยืนยันรหัสผ่าน</label>
+          <input
+            type="password"
+            class="form-control"
+            :class="{ 'is-invalid':!password_isValid }"
+            id="confirm"
+            required
+            v-model.trim="confirm"
+          />
+          <small class="invalid-feedback">[{ password_err_msg }]</small>
+        </div>
+      </div>
+      <div class="row row-cols-1 m-auto">
+        <div class="col">
+          <hr />
+          <div class="d-flex flex-row justify-content-end align-content-end">
+            <button
+              class="btn btn-outline-success"
+              type="button"
+              @click="userCheck($event)"
+            >
+              ตรวจสอบ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <!-- Shop Data -->
+    <div class="row row-cols-1 m-auto border rounded-3 py-2">
+      <div class="col mt-1">
         <!-- header -->
-        <div class="row row-cols-1 m-auto">
-            <div class="col">
-                <h1 class="text-center">ลงทะเบียนผลิต</h1>
-            </div>
-
+        <div class="d-flex flex-row align-items-center justify-content-between">
+          <h3>ข้อมูลผู้ผลิต</h3>
         </div>
+        <hr />
         <!-- end header -->
-        <hr>
-        <!-- User Data -->
-        <div class="row row-cols-1 m-auto border rounded-3 py-2 ">
-            <div class="col mt-1">
-                <div class="d-flex flex-row align-items-center justify-content-between">
-                    <h3>ข้อมูลผู้ใช้</h3>
-                    <button class="btn" type="button" @click="showUserData($event)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-dash-square-dotted" viewBox="0 0 16 16">
-                            <path
-                                d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834 0h.916v-1h-.916v1zm1.833 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <hr>
-            </div>
-            <div class="row row-cols-1 row-cols-lg-2 m-auto" v-show="user_data">
-                <div class="col mt-2">
+        <!-- form -->
+        <div class="row row-cols-1 row-cols-lg-2 m-auto">
+          <div class="col mt-2">
+            <label for="shop_name" class="form-label">ผู้ผลิต</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shop_name"
+              required
+              v-model.trim="shop_name"
+            />
 
-                    <label for="fname" class="form-label">ชื่อ</label>
-                    <input type="text" class="form-control " :class="{'is-invalid':!fname_isValid}" id="fname" required
-                        v-model.trim="fname">
-                    <small></small>
-                </div>
-                <div class="col mt-2">
+            <small></small>
+          </div>
+          <div class="col mt-2">
+            <label for="shop_product_type" class="form-label"
+              >ประเภทสินค้า</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="shop_product_type"
+              required
+              v-model.trim="shop_product_type"
+            />
 
-                    <label for="lname" class="form-label">นามสกุล</label>
-                    <input type="text" class="form-control " :class="{'is-invalid':!lname_isValid}" id="lname" required
-                        v-model.trim="lname">
-
-                    <small></small>
-                </div>
-                <!-- Username -->
-                <div class="col mt-2">
-
-                    <label for="username" class="form-label">ชื่อผู้ใช้</label>
-                    <input type="text" class="form-control " :class="{ 'is-invalid':!username_isValid }" id="username"
-                        required v-model.trim="username">
-
-                    <small></small>
-                </div>
-                <!-- Email -->
-                <div class="col mt-2">
-
-                    <label for="email" class="form-label">อีเมล</label>
-                    <input type="email" class="form-control " :class="{ 'is-invalid':!email_isValid }" id="email"
-                        required v-model.trim="email">
-
-                    <small></small>
-                </div>
-                <!-- Password -->
-                <div class="col mt-2">
-
-                    <label for="password" class="form-label">ตั้งรหัสผ่าน</label>
-                    <input type="password" class="form-control " :class="{ 'is-invalid':!password_isValid }"
-                        id="password" required v-model.trim="password">
-
-                    <small class="invalid-feedback">[{ password_err_msg }]</small>
-                </div>
-                <!-- Confirm -->
-                <div class="col mt-2">
-
-                    <label for="confirm" class="form-label">ยืนยันรหัสผ่าน</label>
-                    <input type="password" class="form-control " :class="{ 'is-invalid':!password_isValid }"
-                        id="confirm" required v-model.trim="confirm">
-                    <small class="invalid-feedback">[{ password_err_msg }]</small>
-                </div>
-
-            </div>
-            <div class="row row-cols-1 m-auto">
-                <div class="col">
-                    <hr>
-                    <div class="d-flex flex-row justify-content-end align-content-end">
-                        <button class="btn btn-outline-success" type="button" @click="userCheck($event)">
-                            ตรวจสอบ
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+            <small></small>
+          </div>
         </div>
-        <hr>
-        <!-- Shop Data -->
-        <div class="row row-cols-1  m-auto border rounded-3 py-2">
-            <div class="col mt-1">
-                <!-- header -->
-                <div class="d-flex flex-row align-items-center justify-content-between">
-                    <h3>ข้อมูลผู้ผลิต</h3>
-
-                </div>
-                <hr>
-                <!-- end header -->
-                <!-- form -->
-                <div class="row row-cols-1 row-cols-lg-2 m-auto">
-                    <div class="col mt-2">
-
-                        <label for="shop_name" class="form-label">ผู้ผลิต</label>
-                        <input type="text" class="form-control " id="shop_name" required v-model.trim="shop_name">
-
-                        <small></small>
-                    </div>
-                    <div class="col mt-2">
-
-                        <label for="shop_product_type" class="form-label">ประเภทสินค้า</label>
-                        <input type="text" class="form-control " id="shop_product_type" required
-                            v-model.trim="shop_product_type">
-
-                        <small></small>
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-lg-2 m-auto">
-                    <div class="col mt-2">
-                        <label for="shop_tel" class="form-label">โทรศัพท์</label>
-                        <input type="text" class="form-control " id="shop_tel" required v-model.trim="shop_tel">
-                        <small></small>
-                    </div>
-                    <div class="col mt-2">
-                        <label for="shop_fax" class="form-label">แฟกซ์</label>
-                        <input type="text" class="form-control " id="shop_fax" required v-model.trim="shop_fax">
-                        <small></small>
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-lg-1 m-auto">
-                    <div class="col">
-
-                        <label for="remark" class="form-label">หมายเหตุ</label>
-                        <input type="text" class="form-control " id="remark" required v-model.trim="shop_remark">
-
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-lg-2 m-auto">
-                    <div class="col my-2">
-                        <label for="province" class="form-label">จังหวัด</label>
-                        <select class="form-select" id="province" @change="onProvinceChange()" v-model="shop_province"
-                            aria-describedby="provinceFeedback" required>
-                            <option selected disabled value="">เลือก</option>
-                            <option v-for="item in province_list" :value="item">[{item}]</option>
-                        </select>
-                    </div>
-                    <div class="col my-2">
-                        <label for="district" class="form-label">อำเภอ</label>
-                        <select class="form-select" id="district" @change="onDistrictChange()" v-model="shop_district"
-                            aria-describedby="districtFeedback" required>
-                            <option selected disabled value="">เลือก</option>
-                            <option v-for="item in district_list" :value="item">[{item}]</option>
-                        </select>
-                    </div>
-                    <div class="col my-2">
-                        <label for="sub_district" class="form-label">ตำบล</label>
-                        <select class="form-select " id="sub_district" v-model="shop_sub_district"
-                            aria-describedby="sub_districtFeedback" required>
-                            <option selected disabled value="">เลือก</option>
-                            <option v-for="item in sub_district_list" :value="item">[{item}]</option>
-                        </select>
-                    </div>
-                    <div class="col mt-2">
-                        <label for="shop_post_id" class="form-label">รหัสไปรษณีย์</label>
-                        <input type="text" class="form-control " id="shop_post_id" required v-model.trim="shop_post_id">
-                        <small></small>
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-lg-1 m-auto">
-                    <div class="col mt-2">
-                        <label for="detail_address" class="form-label">รายละเอียด</label>
-                        <textarea class="form-control" v-model="shop_address" id="detail_address" placeholder="บ้านเลขที่ ซอย "
-                            required></textarea>
-                        <div class="invalid-feedback">
-                            Please enter a message in the textarea.
-                        </div>
-                    </div>
-                </div>
-                <div class="row row-cols-1 m-auto">
-                    <div class="col">
-                        <hr>
-                        <div class="d-flex flex-row justify-content-end align-content-end">
-                            <button class="btn btn-outline-success" type="submit" @click="onSubmit($event)">
-                                ลงทะเบียน
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
+        <div class="row row-cols-1 row-cols-lg-2 m-auto">
+          <div class="col mt-2">
+            <label for="shop_tel" class="form-label">โทรศัพท์</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shop_tel"
+              required
+              v-model.trim="shop_tel"
+            />
+            <small></small>
+          </div>
+          <div class="col mt-2">
+            <label for="shop_fax" class="form-label">แฟกซ์</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shop_fax"
+              required
+              v-model.trim="shop_fax"
+            />
+            <small></small>
+          </div>
         </div>
-    </form>
+        <div class="row row-cols-1 row-cols-lg-1 m-auto">
+          <div class="col">
+            <label for="remark" class="form-label">หมายเหตุ</label>
+            <input
+              type="text"
+              class="form-control"
+              id="remark"
+              required
+              v-model.trim="shop_remark"
+            />
+          </div>
+        </div>
+        <div class="row row-cols-1 row-cols-lg-2 m-auto">
+          <div class="col my-2">
+            <label for="province" class="form-label">จังหวัด</label>
+            <select
+              class="form-select"
+              id="province"
+              @change="onProvinceChange()"
+              v-model="shop_province"
+              aria-describedby="provinceFeedback"
+              required
+            >
+              <option selected disabled value="">เลือก</option>
+              <option v-for="item in province_list" :value="item">
+                [{item}]
+              </option>
+            </select>
+          </div>
+          <div class="col my-2">
+            <label for="district" class="form-label">อำเภอ</label>
+            <select
+              class="form-select"
+              id="district"
+              @change="onDistrictChange()"
+              v-model="shop_district"
+              aria-describedby="districtFeedback"
+              required
+            >
+              <option selected disabled value="">เลือก</option>
+              <option v-for="item in district_list" :value="item">
+                [{item}]
+              </option>
+            </select>
+          </div>
+          <div class="col my-2">
+            <label for="sub_district" class="form-label">ตำบล</label>
+            <select
+              class="form-select"
+              id="sub_district"
+              v-model="shop_sub_district"
+              aria-describedby="sub_districtFeedback"
+              required
+            >
+              <option selected disabled value="">เลือก</option>
+              <option v-for="item in sub_district_list" :value="item">
+                [{item}]
+              </option>
+            </select>
+          </div>
+          <div class="col mt-2">
+            <label for="shop_post_id" class="form-label">รหัสไปรษณีย์</label>
+            <input
+              type="text"
+              class="form-control"
+              id="shop_post_id"
+              required
+              v-model.trim="shop_post_id"
+            />
+            <small></small>
+          </div>
+        </div>
+        <div class="row row-cols-1 row-cols-lg-1 m-auto">
+          <div class="col mt-2">
+            <label for="detail_address" class="form-label">รายละเอียด</label>
+            <textarea
+              class="form-control"
+              v-model="shop_address"
+              id="detail_address"
+              placeholder="บ้านเลขที่ ซอย "
+              required
+            ></textarea>
+            <div class="invalid-feedback">
+              Please enter a message in the textarea.
+            </div>
+          </div>
+        </div>
+        <div class="row row-cols-1 m-auto">
+          <div class="col">
+            <hr />
+            <div class="d-flex flex-row justify-content-end align-content-end">
+              <button
+                class="btn btn-outline-success"
+                type="submit"
+                @click="onSubmit($event)"
+              >
+                ลงทะเบียน
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </main>
 <!-- url scripts -->
 <script>
-    const { createApp, ref } = Vue;
+  const { createApp, ref } = Vue;
 
-    const host = `http://127.0.0.1:8000/`;
-    const token = '';
-    const check_user_api = '';
+  const host = `http://127.0.0.1:8000/`;
+  const token = "";
+  const check_user_api = "";
 
+  const App = createApp({
+    delimiters: ["[{", "}]"],
+    data() {
+      return {
+        fname: "",
+        lname: "",
+        username: "",
+        email: "",
+        password: "",
+        confirm: "",
 
+        shop_name: "",
+        shop_product_type: "",
+        shop_address: "",
+        shop_sub_district: "",
+        shop_district: "",
+        shop_province: "",
+        shop_post_id: "",
+        shop_remark: "",
+        shop_tel: "",
+        shop_fax: "",
 
-    const App = createApp({
-        delimiters: ["[{", "}]"],
-        data() {
-            return {
-                fname: "",
-                lname: "",
-                username: "",
-                email: "",
-                password: "",
-                confirm: "",
+        shop_name_isValid: true,
+        shop_product_type_isValid: true,
+        shop_address_isValid: true,
+        shop_sub_district_isValid: true,
+        shop_district_isValid: true,
+        shop_province_isValid: true,
+        shop_post_id_isValid: true,
+        shop_remark_isValid: true,
+        shop_tel_isValid: true,
+        shop_fax_isValid: true,
 
-                shop_name: "",
-                shop_product_type: "",
-                shop_address: "",
-                shop_sub_district: "",
-                shop_district: "",
-                shop_province: "",
-                shop_post_id: "",
-                shop_remark: "",
-                shop_tel: "",
-                shop_fax: "",
+        user_isValid: true,
+        isValid: true,
 
-                shop_name_isValid: true,
-                shop_product_type_isValid: true,
-                shop_address_isValid: true,
-                shop_sub_district_isValid: true,
-                shop_district_isValid: true,
-                shop_province_isValid: true,
-                shop_post_id_isValid: true,
-                shop_remark_isValid: true,
-                shop_tel_isValid: true,
-                shop_fax_isValid: true,
+        user_data: true,
 
-                user_isValid: true,
-                isValid: true,
+        password_err_msg: "",
 
-                user_data: true,
+        username_isValid: true,
+        email_isValid: true,
+        fname_isValid: true,
+        lname_isValid: true,
+        password_isValid: true,
 
-                password_err_msg: "",
+        province_list: null,
+        district_list: null,
+        sub_district_list: null,
+      };
+    },
+    computed: {},
+    mounted() {
+      try {
+        axios.get("{% url 'get-province' %}").then((res) => {
+          this.province_list = res.data["data"];
+        });
+      } catch (err) {
+        console.error(err);
+      }
 
-                username_isValid: true,
-                email_isValid: true,
-                fname_isValid: true,
-                lname_isValid: true,
-                password_isValid: true,
+      console.log("loaded!");
+    },
+    methods: {
+      onProvinceChange() {
+        const form_data = new FormData();
+        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+        form_data.append("province", this.shop_province);
+        axios.post("{% url 'get-district' %}", form_data).then((res) => {
+          this.district_list = res.data["data"];
+        });
+      },
+      onDistrictChange() {
+        const form_data = new FormData();
+        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+        form_data.append("district", this.shop_district);
+        form_data.append("province", this.shop_province);
+        axios.post("{% url 'get-subDistrict' %}", form_data).then((res) => {
+          this.sub_district_list = res.data["data"];
+        });
+      },
 
+      showUserData(e) {
+        e.preventDefault();
 
-                province_list: null,
-                district_list: null,
-                sub_district_list: null,
+        if (this.user_data) {
+          this.user_data = false;
+        } else {
+          this.user_data = true;
+        }
+      },
+      userCheck(e) {
+        e.preventDefault();
 
-            };
-        },
-        computed: {},
-        mounted() {
-            try {
-                axios
-                    .get("{% url 'get-province' %}")
-                    .then((res) => {
-                        this.province_list = res.data['data'];
-                    });
-            }
-            catch (err) {
-                console.error(err);
-            }
+        var isValid = true;
 
+        this.fname_isValid = true;
+        if (this.fname == "") {
+          this.fname_isValid = false;
+          isValid = false;
+        }
 
-            console.log("loaded!");
-        },
-        methods: {
-            onProvinceChange() {
-                const form_data = new FormData;
-                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
-                form_data.append("province", this.shop_province);
-                axios
-                    .post("{% url 'get-district' %}", form_data)
-                    .then((res) => {
-                        this.district_list = res.data['data'];
-                    });
+        this.lname_isValid = true;
+        if (this.lname == "") {
+          this.lname_isValid = false;
+          isValid = false;
+        }
 
-            },
-            onDistrictChange() {
-                const form_data = new FormData;
-                form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
-                form_data.append("district", this.shop_district);
-                form_data.append("province", this.shop_province);
-                axios
-                    .post("{% url 'get-subDistrict' %}", form_data)
-                    .then((res) => {
-                        this.sub_district_list = res.data['data'];
-                    });
+        this.username_isValid = true;
+        if (this.username == "") {
+          isValid = false;
+          this.username_isValid = false;
+        }
 
-            },
+        this.email_isValid = true;
+        if (this.email == "") {
+          isValid = false;
+          this.email_isValid = false;
+        }
 
-            showUserData(e) {
-                e.preventDefault();
+        this.password_isValid = true;
+        if (this.password.length < 8) {
+          this.password_err_msg = "รหัสสั้นเกินไป";
+          this.password_isValid = false;
+          isValid = false;
+        } else {
+          if (this.password !== this.confirm) {
+            this.password_err_msg = "รหัสผ่านไม่ตรงกัน";
+            this.password_isValid = false;
+            isValid = false;
+          }
+        }
 
-                if (this.user_data) {
-                    this.user_data = false;
-                } else {
-                    this.user_data = true;
-                }
-            },
-            userCheck(e) {
-                e.preventDefault();
+        if (isValid) {
+          const form_data = new FormData();
+          form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+          form_data.append("fname", this.fname);
+          form_data.append("lname", this.lname);
+          form_data.append("username", this.username);
+          form_data.append("email", this.email);
 
-                var isValid = true;
-
-                this.fname_isValid = true;
-                if (this.fname == "") {
-                    this.fname_isValid = false;
-                    isValid = false;
-                }
-
-                this.lname_isValid = true;
-                if (this.lname == "") {
-                    this.lname_isValid = false;
-                    isValid = false;
-                }
-
-                this.username_isValid = true;
-                if (this.username == "") {
-                    isValid = false;
-                    this.username_isValid = false;
-                }
-
-                this.email_isValid = true;
-                if (this.email == "") {
-                    isValid = false;
+          axios
+            .post("{% url 'user-check-api' %}", form_data)
+            .then((response) => {
+              console.log(response.data);
+              if (response.data["status"]) {
+                this.user_isValid = true;
+                Swal.fire(
+                  "Success",
+                  "User is Validation!",
+                  "success"
+                );
+              } else {
+                this.user_isValid = false;
+                switch (response.data["message"]) {
+                  case "email":
                     this.email_isValid = false;
+                    break;
+                  case "username":
+                    this.username_isValid = false;
+                    break;
                 }
+              }
+            });
+        }
+      },
+      onSubmit(e) {
+        console.log("press");
+        e.preventDefault();
 
-                this.password_isValid = true;
-                if (this.password.length < 8) {
-                    this.password_err_msg = "รหัสสั้นเกินไป";
-                    this.password_isValid = false;
-                    isValid = false;
-                }
-                else {
-                    if (this.password !== this.confirm) {
-                        this.password_err_msg = "รหัสผ่านไม่ตรงกัน";
-                        this.password_isValid = false;
-                        isValid = false;
-                    }
-                }
+        this.isValid = true;
 
-                if (isValid) {
-                    const form_data = new FormData;
-                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
-                    form_data.append("fname", this.fname);
-                    form_data.append("lname", this.lname);
-                    form_data.append("username", this.username);
-                    form_data.append("email", this.email);
+        this.shop_name_isValid = true;
+        if (this.shop_name == "") {
+          this.shop_name_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_product_type_isValid = true;
+        if (this.shop_product_type == "") {
+          this.shop_product_type_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_address_isValid = true;
+        if (this.shop_address == "") {
+          this.shop_address_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_sub_district_isValid = true;
+        if (this.shop_sub_district == "") {
+          this.shop_sub_district_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_district_isValid = true;
+        if (this.shop_district == "") {
+          this.shop_district_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_province_isValid = true;
+        if (this.shop_province == "") {
+          this.shop_province_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_post_id_isValid = true;
+        if (this.shop_post_id == "") {
+          this.shop_post_id_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_remark_isValid = true;
+        if (this.shop_remark == "") {
+          this.shop_remark_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_tel_isValid = true;
+        if (this.shop_tel == "") {
+          this.shop_tel_isValid = false;
+          this.isValid = false;
+        }
+        this.shop_fax_isValid = true;
+        if (this.shop_fax == "") {
+          this.shop_fax_isValid = false;
+          this.isValid = false;
+        }
 
-                    axios
-                        .post("{% url 'user-check-api' %}", form_data)
-                        .then((response) => {
-                            console.log(response.data);
-                            if (response.data['status']) {
-                                this.user_isValid = true;
+        if (!this.user_isValid) {
+          this.isValid = false;
+        }
 
-                            }
-                            else {
-                                this.user_isValid = false;
-                                switch (response.data['message']) {
-                                    case "email":
-                                        this.email_isValid = false;
-                                        break;
-                                    case "username":
-                                        this.username_isValid = false;
-                                        break;
-                                }
-                            }
-                        });
+        if (this.isValid) {
+          console.log("sending!");
+          const form_data = new FormData();
+          form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+          form_data.append("fname", this.fname);
+          form_data.append("lname", this.lname);
+          form_data.append("username", this.username);
+          form_data.append("email", this.email);
+          form_data.append("password", this.password);
+          form_data.append("shop_name", this.shop_name);
+          form_data.append("product_type", this.shop_product_type);
+          form_data.append("detail_address", this.shop_address);
+          form_data.append("sub_district", this.shop_sub_district);
+          form_data.append("district", this.shop_district);
+          form_data.append("province", this.shop_province);
+          form_data.append("post_id", this.shop_post_id);
+          form_data.append("remark", this.shop_remark);
+          form_data.append("tel", this.shop_tel);
+          form_data.append("fax", this.shop_fax);
 
-                }
-            },
-            onSubmit(e) {
-                console.log("press")
-                e.preventDefault();
+          axios
+            .post("{% url 'create-shop-api' %}", form_data)
+            .then((response) => {
+              if (response.data["status"]) {
+                Swal.fire("Create Shop!", "Successfully!", "success");
+                setTimeout(3000);
+                location.replace("{% url 'homepage' %}");
+              }
+            });
+        }
+      },
+    },
+  });
 
-                this.isValid = true;
-
-                this.shop_name_isValid = true;
-                if (this.shop_name == "") {
-                    this.shop_name_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_product_type_isValid = true;
-                if (this.shop_product_type == "") {
-                    this.shop_product_type_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_address_isValid = true;
-                if (this.shop_address == "") {
-                    this.shop_address_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_sub_district_isValid = true;
-                if (this.shop_sub_district == "") {
-                    this.shop_sub_district_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_district_isValid = true;
-                if (this.shop_district == "") {
-                    this.shop_district_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_province_isValid = true;
-                if (this.shop_province == "") {
-                    this.shop_province_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_post_id_isValid = true;
-                if (this.shop_post_id == "") {
-                    this.shop_post_id_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_remark_isValid = true;
-                if (this.shop_remark == "") {
-                    this.shop_remark_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_tel_isValid = true;
-                if (this.shop_tel == "") {
-                    this.shop_tel_isValid = false;
-                    this.isValid = false;
-                }
-                this.shop_fax_isValid = true;
-                if (this.shop_fax == "") {
-                    this.shop_fax_isValid = false;
-                    this.isValid = false;
-                }
-
-                if (!this.user_isValid) {
-                    this.isValid = false;
-                }
-
-                if (this.isValid) {
-                    console.log("sending!")
-                    const form_data = new FormData;
-                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
-                    form_data.append("fname", this.fname);
-                    form_data.append("lname", this.lname);
-                    form_data.append("username", this.username);
-                    form_data.append("email", this.email);
-                    form_data.append("password", this.password);
-                    form_data.append("shop_name", this.shop_name);
-                    form_data.append("product_type", this.shop_product_type);
-                    form_data.append("detail_address", this.shop_address);
-                    form_data.append("sub_district", this.shop_sub_district);
-                    form_data.append("district", this.shop_district);
-                    form_data.append("province", this.shop_province);
-                    form_data.append("post_id", this.shop_post_id);
-                    form_data.append("remark", this.shop_remark);
-                    form_data.append("tel", this.shop_tel);
-                    form_data.append("fax", this.shop_fax);
-
-                    axios
-                        .post("{% url 'create-shop-api' %}", form_data)
-                        .then((response) => {
-                            if (response.data['status']) {
-                                Swal.fire(
-                                    'Create Shop!',
-                                    'Successfully!',
-                                    'success'
-                                );
-                                setTimeout(3000);
-                                location.replace("{% url 'homepage' %}");
-                            }
-                        });
-
-
-
-                }
-
-
-
-            }
-        },
-    });
-
-    App.mount("#app");
-
+  App.mount("#app");
 </script>
 
 {% endblock main %}

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views as api
+from django.shortcuts import render, redirect
 
 urlpatterns = [
     path('get/province', api.getProvince, name='get-province'),
@@ -9,6 +10,9 @@ urlpatterns = [
     path('get/user/id', api.get_user, name='get-user-id'),
     
     path('get/product/all', api.getAllProduct, name="get-product-all"),
+    path('get/product/shop', api.getProductShop, name="get-product-shop"),
+    
+    
     path('get/shop/all', api.getAllShop, name='get-shop-all'),
     
     path('auth-login/', api.login_api,name='login-api'),

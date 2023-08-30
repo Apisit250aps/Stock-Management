@@ -13,10 +13,37 @@ from django.contrib.auth import authenticate, login
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 
+import random
+
 from . import models
 from . import serializers
 
 # Create your views here.
+def shopCode():
+    code = 'S'
+    num = random.choices(range(10), k=10)
+    
+    for i in num:
+        code += str(i)
+        
+    if models.ShopData.objects.filter(shop_code=code).count() != 0:
+        shopCode()
+        
+    else :
+        return code
+
+def productCode():
+    code = 'P'
+    num = random.choices(range(10), k=10)
+    
+    for i in num:
+        code += str(i)
+        
+    if models.ProductData.objects.filter(product_code=code).count() != 0:
+        productCode()
+    else :
+        return code
+    
 
 
 @csrf_exempt
@@ -210,6 +237,7 @@ def createInputData(request):
                 _product = models.ProductData.objects.create(
                     product_id=100000,
                     product_name=product_name,
+                    product_code=productCode(),
                     product_cost=product_cost,
                     product_unit=product_unit,
                     product_desc=product_desc,
@@ -218,14 +246,13 @@ def createInputData(request):
             else:
                 _product = models.ProductData.objects.create(
                     product_name=product_name,
+                    product_code=productCode(),
                     product_cost=product_cost,
                     product_unit=product_unit,
                     product_desc=product_desc,
                     product_price=product_price
                 )
 
-            models.ProductData.objects.filter(product_id=_product.product_id).update(
-                product_code=f"P{_product.product_id}")
 
             print(
                 f"No. {models.InputInvoice.objects.get(invoice_id=invoice.invoice_id).invoice_no}"
@@ -309,6 +336,7 @@ def createShop(request):
                     user=user,
                     user_status=1,
                     shop_id=shop_id,
+                    shop_code=shopCode(),
                     shop_name=shop_name,
                     shop_product_type=shop_product_type,
                     shop_contact=shop_contact,
@@ -326,6 +354,7 @@ def createShop(request):
                 shop_create = models.ShopData.objects.create(
                     user=user,
                     user_status=1,
+                    shop_code=shopCode(),
                     shop_name=shop_name,
                     shop_product_type=shop_product_type,
                     shop_contact=shop_contact,
@@ -340,8 +369,6 @@ def createShop(request):
                     shop_remark=shop_remark
                 )
 
-            models.ShopData.objects.filter(shop_id=shop_create.shop_id).update(
-                shop_code=f"S{shop_create.shop_id}")
 
             if shop_create:
                 status = True
@@ -399,6 +426,34 @@ def getAllProduct(request):
             "status": True,
             "data": products
 
+        }
+    )
+
+@csrf_exempt
+@api_view(["GET",])
+@permission_classes((AllowAny,))
+def getProductShop(request):
+    username = None
+    if request.user.is_authenticated:
+        username = request.user.username
+    
+    print(username)
+    user = models.User.objects.get(username=username)
+    print(user)
+    shop = models.ShopData.objects.get(user=user)
+    # invoice = models.InputInvoice.objects.get(shop=shop)
+    invoice_data = models.InputInvoice.objects.filter(shop=shop)
+    invoiceSerializerData = serializers.InputInvoiceSerializer(invoice_data, many=True).data 
+    # inputData_data = models.InputData.objects.filter(invoice=invoice)
+    # inputDataSerializerData = serializers.InputDataSerializer(inputData_data, many=True).data
+    return Response(
+        {
+            "status":200,
+            "data":{
+                "invoice":invoiceSerializerData,
+                # "input_data":inputDataSerializerData
+                
+            }
         }
     )
 
@@ -470,6 +525,7 @@ def deleteProduct(request):
             "status": True
         }
     )
+
 
 
 @csrf_exempt

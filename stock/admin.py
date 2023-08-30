@@ -51,3 +51,9 @@ class InputInvoiceAdmin(admin.ModelAdmin):
         'shop',
         'input_date'
     ]
+    
+@admin.register(models.InputData)
+class InputDataAdmin(admin.ModelAdmin):
+    list_display = [
+        'invoice'
+    ]
