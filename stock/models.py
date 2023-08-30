@@ -137,6 +137,7 @@ class InputData(models.Model):
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=8, decimal_places=2)
     discount = models.DecimalField(max_digits=8, decimal_places=2)
+    unit_cost = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     
     def __str__(self):
     

@@ -185,7 +185,7 @@ def createInputData(request):
     obj_string = request.POST['products']
     user_id = request.session['_auth_user_id']
     remark = request.data['remark']
-    user = User.objects.get(id=user_id)
+    user = User.objects.get(username=request.user.username)
     object_product = json.loads(obj_string)
     products = []
 
