@@ -19,32 +19,45 @@ from . import models
 from . import serializers
 
 # Create your views here.
+
+
 def shopCode():
     code = 'S'
     num = random.choices(range(10), k=10)
-    
+
     for i in num:
         code += str(i)
-        
+
     if models.ShopData.objects.filter(shop_code=code).count() != 0:
         shopCode()
-        
-    else :
+
+    else:
         return code
+
 
 def productCode():
     code = 'P'
     num = random.choices(range(10), k=10)
-    
+
     for i in num:
         code += str(i)
-        
+
     if models.ProductData.objects.filter(product_code=code).count() != 0:
         productCode()
-    else :
+    else:
         return code
-    
 
+def invoiceCode():
+    code = 'I'
+    num = random.choices(range(10), k=10)
+
+    for i in num:
+        code += str(i)
+
+    if models.InputInvoice.objects.filter(invoice_no=code).count() != 0:
+        invoiceCode()
+    else:
+        return code
 
 @csrf_exempt
 @api_view(["POST", ])
@@ -64,9 +77,7 @@ def userCheck(request):
             status = False
             message = "email"
     except Exception as err:
-        print("erer")
         print(err)
-        pass
 
     return Response(
         {
@@ -90,6 +101,7 @@ def get_user(request):
             "uid": user_id
         }
     )
+
 
 
 @csrf_exempt
@@ -253,7 +265,6 @@ def createInputData(request):
                     product_price=product_price
                 )
 
-
             print(
                 f"No. {models.InputInvoice.objects.get(invoice_id=invoice.invoice_id).invoice_no}"
             )
@@ -312,7 +323,8 @@ def createShop(request):
     shop_fax = data['fax']
     shop_email = email
     shop_remark = data['remark']
-
+    shop_area = models.AreaData.objects.get(id=data['area'])
+    
     if User.objects.filter(username=username).count() != 0:
         return Response({"status": False, "message": 'มีชื่อผู้ใช้นี้แล้ว'})
 
@@ -330,51 +342,28 @@ def createShop(request):
                     type_name=shop_product_type)
 
             # create shop data
-            if models.ShopData.objects.all().count() == 0:
-                shop_id = 10001
-                shop_create = models.ShopData.objects.create(
-                    user=user,
-                    user_status=1,
-                    shop_id=shop_id,
-                    shop_code=shopCode(),
-                    shop_name=shop_name,
-                    shop_product_type=shop_product_type,
-                    shop_contact=shop_contact,
-                    shop_province=shop_province,
-                    shop_district=shop_district,
-                    shop_subdistrict=shop_subdistrict,
-                    shop_detail_address=shop_address,
-                    shop_tel=shop_tel,
-                    shop_post_code=shop_post_id,
-                    shop_fax=shop_fax,
-                    shop_email=shop_email,
-                    shop_remark=shop_remark
-                )
-            else:
-                shop_create = models.ShopData.objects.create(
-                    user=user,
-                    user_status=1,
-                    shop_code=shopCode(),
-                    shop_name=shop_name,
-                    shop_product_type=shop_product_type,
-                    shop_contact=shop_contact,
-                    shop_province=shop_province,
-                    shop_district=shop_district,
-                    shop_subdistrict=shop_subdistrict,
-                    shop_detail_address=shop_address,
-                    shop_tel=shop_tel,
-                    shop_post_code=shop_post_id,
-                    shop_fax=shop_fax,
-                    shop_email=shop_email,
-                    shop_remark=shop_remark
-                )
-
-
+            shop_create = models.ShopData.objects.create(
+                user=user,
+                user_status=1,
+                shop_code=shopCode(),
+                shop_name=shop_name,
+                shop_product_type=shop_product_type,
+                shop_contact=shop_contact,
+                shop_province=shop_province,
+                shop_district=shop_district,
+                shop_subdistrict=shop_subdistrict,
+                shop_detail_address=shop_address,
+                shop_tel=shop_tel,
+                shop_post_code=shop_post_id,
+                shop_fax=shop_fax,
+                shop_email=shop_email,
+                shop_remark=shop_remark,
+                shop_area_code=shop_area,
+            )
             if shop_create:
                 status = True
 
     except Exception as err:
-        print(err)
         status = False
         User.objects.get(id=user.id).delete()
 
@@ -413,6 +402,31 @@ def login_api(request):
 
     return Response({'status': status, 'message': msg})
 
+@csrf_exempt
+@api_view(["GET", ])
+@permission_classes((AllowAny,))
+def getArea(request):
+    data = serializers.AreaSerializer(models.AreaData.objects.all(), many=True).data
+    
+    return Response(
+        {
+            "status":True,
+            "data":data
+        }
+    )
+    
+@csrf_exempt
+@api_view(["GET", ])
+@permission_classes((AllowAny,))
+def getProductType(request):
+    data = serializers.ProductTypeSerializer(models.ProductTypeData.objects.all(), many=True).data
+    
+    return Response(
+        {
+            "status":True,
+            "data":data
+        }
+    )
 
 @csrf_exempt
 @api_view(["GET"])
@@ -425,9 +439,9 @@ def getAllProduct(request):
         {
             "status": True,
             "data": products
-
         }
     )
+
 
 @csrf_exempt
 @api_view(["GET",])
@@ -436,23 +450,24 @@ def getProductShop(request):
     username = None
     if request.user.is_authenticated:
         username = request.user.username
-    
+
     print(username)
     user = models.User.objects.get(username=username)
     print(user)
     shop = models.ShopData.objects.get(user=user)
     # invoice = models.InputInvoice.objects.get(shop=shop)
     invoice_data = models.InputInvoice.objects.filter(shop=shop)
-    invoiceSerializerData = serializers.InputInvoiceSerializer(invoice_data, many=True).data 
+    invoiceSerializerData = serializers.InputInvoiceSerializer(
+        invoice_data, many=True).data
     # inputData_data = models.InputData.objects.filter(invoice=invoice)
     # inputDataSerializerData = serializers.InputDataSerializer(inputData_data, many=True).data
     return Response(
         {
-            "status":200,
-            "data":{
-                "invoice":invoiceSerializerData,
+            "status": 200,
+            "data": {
+                "invoice": invoiceSerializerData,
                 # "input_data":inputDataSerializerData
-                
+
             }
         }
     )
@@ -525,7 +540,6 @@ def deleteProduct(request):
             "status": True
         }
     )
-
 
 
 @csrf_exempt

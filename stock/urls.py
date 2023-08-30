@@ -6,8 +6,11 @@ urlpatterns = [
     path('get/province', api.getProvince, name='get-province'),
     path('get/district', api.getDistrict, name='get-district'),
     path('get/sub-district', api.getTambon, name='get-subDistrict'),
+    path('get/area', api.getArea, name='get-area'),
+    path('get/product-type', api.getProductType, name='get-product-type'),
     
     path('get/user/id', api.get_user, name='get-user-id'),
+    
     
     path('get/product/all', api.getAllProduct, name="get-product-all"),
     path('get/product/shop', api.getProductShop, name="get-product-shop"),

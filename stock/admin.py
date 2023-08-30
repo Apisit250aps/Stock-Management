@@ -57,3 +57,9 @@ class InputDataAdmin(admin.ModelAdmin):
     list_display = [
         'invoice'
     ]
+    
+@admin.register(models.AreaData)
+class AreaDataAdmin(admin.ModelAdmin):
+    list_display = [
+        'area_name'
+    ]

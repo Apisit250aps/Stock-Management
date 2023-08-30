@@ -22,3 +22,12 @@ class InputDataSerializer(serializers.ModelSerializer):
         model = models.InputData
         fields = '__all__'
         
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AreaData
+        fields = '__all__'
+        
+class ProductTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductTypeData
+        fields = '__all__'
