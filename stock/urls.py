@@ -8,6 +8,9 @@ urlpatterns = [
     path('get/sub-district', api.getTambon, name='get-subDistrict'),
     path('get/area', api.getArea, name='get-area'),
     path('get/product-type', api.getProductType, name='get-product-type'),
+    path('get/product-categories', api.getProductCategory, name='get-product-categories'),
+    path('get/invoice/shop', api.getShopInputInvoices, name='get-invoice-shop'),
+    
     
     path('get/user/id', api.get_user, name='get-user-id'),
     

@@ -31,3 +31,8 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductTypeData
         fields = '__all__'
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductCategory
+        fields = '__all__'

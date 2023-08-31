@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<main class="p-3" id="app">
+<main class="p-3 bg-light container rounded-2" id="app">
     <form action="" class="py-5 ">
         <!-- header -->
         <div class="row row-cols-1 m-auto">
@@ -137,11 +137,8 @@
                                 aria-describedby="inputGroupPrepend" required v-model="product_type"
                                 :class="{ 'is-invalid': !product_type_isValid }">
                             <datalist id="product-types">
-                                <option value="Edge">
-                                <option value="Firefox">
-                                <option value="Chrome">
-                                <option value="Opera">
-                                <option value="Safari">
+                                <option v-for="item in product_cats_list" :value="item.category">
+                                
                             </datalist>
                         </div>
                     </div>
@@ -180,7 +177,7 @@
                     <!-- total price -->
                     <div class="col mt-2">
                         <label for="total-price" class="form-label">รวม</label>
-                        <input type="number" class="form-control" id="total-price" min="0" disabled v-model="total">
+                        <input type="number" class="form-control" id="total-price" v-model="total" min="0" disabled>
 
                     </div>
                     <!-- discounts -->
@@ -234,6 +231,7 @@
                             <th scope="col">ราคา</th>
                             <th scope="col">จำนวน</th>
                             <th scope="col">ส่วนลด</th>
+                            <th scope="col">รวมทั้งหมด</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -246,6 +244,7 @@
                             <td>[{ item.price }]</td>
                             <td>[{ item.unit }]</td>
                             <td>[{ item.discount }]</td>
+                            <td>[{ item.final_total }]</td>
                         </tr>
                     </tbody>
                 </table>
@@ -262,7 +261,7 @@
                     <!-- total cost -->
                     <div class="col mt-2">
                         <label for="total-cost" class="form-label">ต้นทุนทั้งหมด</label>
-                        <input type="number" class="form-control" id="total-cost" min="0" disabled>
+                        <input type="number" class="form-control" id="inv_cost" min="0" disabled v-model="inv_cost">
                         <small class="invalid-feedback">
                             Please provide a valid city.
                         </small>
@@ -270,7 +269,7 @@
                     <!-- total price -->
                     <div class="col mt-2">
                         <label for="total-price" class="form-label">รวมเป็นเงิน</label>
-                        <input type="number" class="form-control" id="total-price" min="0" disabled>
+                        <input type="number" class="form-control" id="total-price" min="0" disabled v-model="inv_price">
                         <small class="invalid-feedback">
                             Please provide a valid city.
                         </small>
@@ -278,7 +277,7 @@
                     <!-- total discount -->
                     <div class="col mt-2">
                         <label for="total-discount" class="form-label">ส่วนลด</label>
-                        <input type="number" class="form-control" id="total-discount" min="0" disabled>
+                        <input type="number" class="form-control" id="total-discount" min="0" disabled v-model="inv_discount">
                         <small class="invalid-feedback">
                             Please provide a valid city.
                         </small>
@@ -286,7 +285,7 @@
                     <!-- total final -->
                     <div class="col mt-2">
                         <label for="total-final" class="form-label">รวมทั้งสิ้น</label>
-                        <input type="number" class="form-control" id="total-final" min="0" disabled>
+                        <input type="number" class="form-control" id="total-final" min="0" disabled v-model="inv_total">
                         <small class="invalid-feedback">
                             Please provide a valid city.
                         </small>
@@ -314,7 +313,7 @@
     </form>
 </main>
 <script>
-    const { createApp, ref } = Vue;
+    const { createApp, ref, computed } = Vue;
     const App = createApp({
         delimiters: ["[{", "}]"],
         data() {
@@ -339,13 +338,50 @@
                 cost: 0,
                 price: 0,
                 unit: 0,
-                total: (this.price),
+                total: computed(() => {
+                    return (this.price - this.cost) * this.unit;
+                }),
                 discount: 0,
-                final_total: 0,
+                final_total: computed(() => {
+                    return this.total - this.discount;
+                }),
 
                 index_selector: null,
 
                 show_shop: true,
+
+                inv_cost: computed(() => {
+                    var cost = 0;
+                    for (let c of this.product_list) {
+                        cost += c.cost;
+                    }
+
+                    return cost;
+                }),
+                inv_price: computed(() => {
+                    var price = 0;
+                    for (let c of this.product_list) {
+                        price += c.price;
+                    }
+
+                    return price
+                }),
+                inv_discount: computed(() => {
+                    var discount = 0;
+                    for (let c of this.product_list){
+                        discount += c.discount
+                    }
+
+                    return discount
+                }),
+                inv_total: computed(() => {
+                    var final_total = 0;
+                    for (let c of this.product_list){
+                        final_total += c.final_total
+                    }
+
+                    return final_total
+                }),
 
                 product_name_isValid: true,
                 product_type_isValid: true,
@@ -361,10 +397,17 @@
 
                 isValid: true,
 
+                product_cats_list:null,
+
             };
         },
         mounted() {
             console.log("on mounted!");
+            axios
+                .get(`{% url 'get-product-categories' %}`)
+                .then((response)=>{
+                    this.product_cats_list = response.data
+                })
         },
 
         methods: {
@@ -433,7 +476,7 @@
                         unit: this.unit,
                         total: this.total,
                         discount: this.discount,
-                        total_price: this.total_price,
+                        final_total: this.final_total,
                     };
                     try {
                         this.product_list.push(product_obj);
@@ -443,13 +486,10 @@
                         this.cost = 0;
                         this.price = 0;
                         this.unit = 0;
-                        this.total = 0;
                         this.discount = 0;
-                        this.total_price = 0;
-
                     }
                     catch (error) {
-                        console.error(err);
+                        console.error(error);
 
                     }
                 }
@@ -466,9 +506,9 @@
                 this.cost = select.cost;
                 this.price = select.price;
                 this.unit = select.unit;
-                this.total = select.total;
+
                 this.discount = select.discount;
-                this.total_price = select.total_price;
+
             },
 
             deleteProduct() {
@@ -476,16 +516,15 @@
 
                 this.product_list.splice(index, 1);
                 this.index_selector = null;
-
                 this.product_name = "";
                 this.product_type = "";
                 this.product_detail = "";
                 this.cost = 0;
                 this.price = 0;
                 this.unit = 0;
-                this.total = 0;
+
                 this.discount = 0;
-                this.total_price = 0;
+
             },
 
             editProduct() {
@@ -496,11 +535,12 @@
                     this.product_list[index].product_name = this.product_name;
                     this.product_list[index].product_type = this.product_type;
                     this.product_list[index].product_detail = this.product_detail;
+                    this.product_list[index].cost = this.cost;
                     this.product_list[index].price = this.price;
                     this.product_list[index].unit = this.unit;
                     this.product_list[index].total = this.total;
                     this.product_list[index].discount = this.discount;
-                    this.product_list[index].total_price = this.total_price;
+                    this.product_list[index].final_total = this.final_total;
 
                     this.product_type = "";
                     this.product_name = "";
@@ -508,14 +548,14 @@
                     this.cost = 0;
                     this.price = 0;
                     this.unit = 0;
-                    this.total = 0;
+
                     this.discount = 0;
-                    this.total_price = 0;
+
                 }
                 catch {
 
                 }
-                
+
             },
 
             onSaveData(e) {
@@ -532,7 +572,11 @@
                     const form_data = new FormData();
                     form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
                     form_data.append('products', data);
-                    form_data.append("remark", '-')
+                    form_data.append('total_cost', this.inv_cost)
+                    form_data.append('total_price', this.inv_price)
+                    form_data.append('total_discount', this.inv_discount)
+                    form_data.append('total', this.inv_total)
+                    form_data.append("remark", '-');
 
                     axios
                         .post("{% url 'create-InputData-api' %}", form_data)

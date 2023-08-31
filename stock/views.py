@@ -21,6 +21,15 @@ from . import serializers
 # Create your views here.
 
 
+def ProductCategory(category):
+    if models.ProductCategory.objects.filter(category=category).count() != 0:
+        category = models.ProductCategory.objects.get(category=category)
+    else:
+        category = models.ProductCategory.objects.create(category=category)
+
+    return category
+
+
 def shopCode():
     code = 'S'
     num = random.choices(range(10), k=10)
@@ -47,6 +56,7 @@ def productCode():
     else:
         return code
 
+
 def invoiceCode():
     code = 'I'
     num = random.choices(range(10), k=10)
@@ -58,6 +68,7 @@ def invoiceCode():
         invoiceCode()
     else:
         return code
+
 
 @csrf_exempt
 @api_view(["POST", ])
@@ -101,7 +112,6 @@ def get_user(request):
             "uid": user_id
         }
     )
-
 
 
 @csrf_exempt
@@ -182,118 +192,64 @@ def getTambon(request):
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def createInputData(request):
-    obj_string = request.POST['products']
-    user_id = request.session['_auth_user_id']
+    # user_id = request.session['_auth_user_id']
+    obj_string = request.data['products']
+    status = True
     remark = request.data['remark']
     user = User.objects.get(username=request.user.username)
     object_product = json.loads(obj_string)
-    products = []
+    shop = models.ShopData.objects.get(user=user)
 
-    total_price = 0
-    discount = 0
+    total_cost = request.data['total_cost']
+    total_price = request.data['total_price']
+    total_discount = request.data['total_discount']
+    totals = request.data['total']
+    print(object_product)
 
-    status = True
-
-    for i, o in dict(object_product).items():
-        pro = {}
-        for x, y in o.items():
-            pro[x] = y
-            if x == 'total_price':
-                total_price += y
-            if x == 'discount':
-                discount += y
-        products.append(pro)
-
-    print(products)
-    print(total_price, discount)
-
+    
     try:
-        shop = models.ShopData.objects.get(user=user)
 
-        if models.InputInvoice.objects.all().count() == 0:
-
-            inv_id = 100001
-            invoice = models.InputInvoice.objects.create(
-                invoice_id=inv_id,
-                shop=shop,
-                remark=remark,
-                total_price=total_price,
-                discount=discount,
-            )
-
-        else:
-
-            invoice = models.InputInvoice.objects.create(
-                shop=shop,
-                remark=remark,
-                total_price=total_price,
-                discount=discount,
-            )
-
-        models.InputInvoice.objects.filter(invoice_id=invoice.invoice_id).update(
-            invoice_no=f"I{shop.shop_code}{invoice.invoice_id}"
+        invoice = models.InputInvoice.objects.create(
+            invoice_no=invoiceCode(),
+            shop=shop,
+            total_cost=total_cost,
+            total_price=totals,
+            total_discount=total_discount,
+            remark=remark
         )
+        try :
+            for products in object_product.values():
+                product_code = productCode()
+                product_name = products['product_name']
+                product_desc = products['product_detail']
+                product_price = products['price']
+                product_unit = products['unit']
+                product_cost = products['cost']
+                product_category = ProductCategory(products['product_type'])
 
-        for product in products:
-            product_name = product['product_name']
-            product_desc = product['product_detail']
-            product_price = product['price']
-            product_cost = product['cost']
-            product_unit = product['unit']
-            product_disc = product['discount']
-
-            _product = models.ProductData.objects
-
-            if models.ProductData.objects.all().count() == 0:
-
-                _product = models.ProductData.objects.create(
-                    product_id=100000,
+                product = models.ProductData.objects.create(
+                    product_code=product_code,
                     product_name=product_name,
-                    product_code=productCode(),
-                    product_cost=product_cost,
-                    product_unit=product_unit,
                     product_desc=product_desc,
-                    product_price=product_price
-                )
-            else:
-                _product = models.ProductData.objects.create(
-                    product_name=product_name,
-                    product_code=productCode(),
-                    product_cost=product_cost,
+                    product_price=product_price,
                     product_unit=product_unit,
-                    product_desc=product_desc,
-                    product_price=product_price
+                    product_cost=product_cost,
+                    product_category=product_category,
                 )
+                models.InputData.objects.create(
+                    invoice=invoice,
+                    invoice_no=invoice.invoice_no,
+                    product=product,
+                    quantity=product_unit,
+                    unit_price=product_price,
+                    unit_cost=product_cost,
+                    discount=products['discount']
+                )
+        except Exception as err:
+            print(err)
 
-            print(
-                f"No. {models.InputInvoice.objects.get(invoice_id=invoice.invoice_id).invoice_no}"
-            )
-
-            models.InputData.objects.create(
-                invoice=invoice,
-                invoice_no=models.InputInvoice.objects.get(
-                    invoice_id=invoice.invoice_id).invoice_no,
-                product=_product,
-                quantity=product_unit,
-                discount=product_disc,
-                unit_price=product_cost
-
-            )
-
-            models.TempInputDB.objects.create(
-                invoice=invoice.invoice_id,
-                invoice_no=models.InputInvoice.objects.get(
-                    invoice_id=invoice.invoice_id).invoice_no,
-                product=models.ProductData.objects.get(
-                    product_id=_product.product_id).product_code,
-                quantity=product_unit,
-                discount=product_disc,
-                unit_price=product_cost
-            )
-
-    except TypeError as err:
-        print(err)
-        status = False
+    except:
+        models.InputInvoice.objects.filter(id=invoice.id).delete()
 
     return Response({
         "status": status
@@ -324,7 +280,7 @@ def createShop(request):
     shop_email = email
     shop_remark = data['remark']
     shop_area = models.AreaData.objects.get(id=data['area'])
-    
+
     if User.objects.filter(username=username).count() != 0:
         return Response({"status": False, "message": 'มีชื่อผู้ใช้นี้แล้ว'})
 
@@ -402,31 +358,50 @@ def login_api(request):
 
     return Response({'status': status, 'message': msg})
 
+
 @csrf_exempt
 @api_view(["GET", ])
 @permission_classes((AllowAny,))
 def getArea(request):
-    data = serializers.AreaSerializer(models.AreaData.objects.all(), many=True).data
-    
+    data = serializers.AreaSerializer(
+        models.AreaData.objects.all(), many=True).data
+
     return Response(
         {
-            "status":True,
-            "data":data
+            "status": True,
+            "data": data
         }
     )
-    
+
+
 @csrf_exempt
 @api_view(["GET", ])
 @permission_classes((AllowAny,))
 def getProductType(request):
-    data = serializers.ProductTypeSerializer(models.ProductTypeData.objects.all(), many=True).data
-    
+    data = serializers.ProductTypeSerializer(
+        models.ProductTypeData.objects.all(), many=True).data
+
     return Response(
         {
-            "status":True,
-            "data":data
+            "status": True,
+            "data": data
         }
     )
+
+
+@csrf_exempt
+@api_view(["GET", ])
+@permission_classes((AllowAny,))
+def getProductCategory(request):
+    data = serializers.ProductCategorySerializer(
+        models.ProductCategory.objects.all(), many=True).data
+
+    return Response(
+        
+        data=data
+        
+    )
+
 
 @csrf_exempt
 @api_view(["GET"])
@@ -471,7 +446,34 @@ def getProductShop(request):
             }
         }
     )
-
+    
+    
+@csrf_exempt
+@api_view(["GET",])
+@permission_classes((AllowAny,))
+def getShopInputInvoices(request):
+    user = User.objects.get(username=request.user.username)
+    shop = models.ShopData.objects.get(user=user)
+    
+    invoice_data = serializers.InputInvoiceSerializer(models.InputInvoice.objects.filter(shop=shop), many=True).data
+    invoices = []
+    for invoice in invoice_data:
+        input_data = serializers.InputDataSerializer(models.InputData.objects.filter(invoice=int(invoice['id'])), many=True).data
+       
+        invoice['shop'] = models.ShopData.objects.get(id=int(invoice['shop'])).shop_name
+        input_information = []
+        for data in input_data:
+            data['product'] = serializers.ProductDataSerializer(models.ProductData.objects.filter(id=int(data['product'])), many=True).data[0]
+            data['product']['product_category'] = models.ProductCategory.objects.get(id=int(data['product']['product_category'])).category
+            input_information.append(data)
+            
+        invoice["data_input"] = input_information
+        
+        invoices.append(invoice)
+        
+    return Response(
+        data=invoices
+    )
 
 @csrf_exempt
 @api_view(["GET",])

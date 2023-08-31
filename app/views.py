@@ -26,7 +26,7 @@ def homepage(request):
 @login_required(login_url='/page/login/')
 def show_product(request):
 
-    return render(request, 'product/show.html')
+    return render(request, 'product/invoice.html')
 
 @login_required(login_url='/page/login/')
 def create_product(request):
