@@ -1,603 +1,720 @@
-{% extends 'product/base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    
 
-{% block content %}
-<main class="p-3 bg-light container rounded-2" id="app">
-    <form action="" class="py-5 ">
-        <!-- header -->
-        <div class="row row-cols-1 m-auto">
-            <div class="col">
-                <h1 class="text-center ">ลงทะเบียนสินค้าเข้า</h1>
-            </div>
-        </div>
-        <!-- header -->
-        <hr>
-        <!-- shop information -->
-        <div class="row row-cols-1 m-auto border py-2 rounded-3">
-            <!-- invoices info -->
-            <div class="col mt-1">
-                <div class=" d-flex flex-row align-items-center justify-content-between">
-                    <h3>ข้อมูลเอกสาร</h3>
-                    <button class="btn" type="button" @click="showShopData($event)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-dash-square-dotted" viewBox="0 0 16 16">
-                            <path
-                                d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834 0h.916v-1h-.916v1zm1.833 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
-                        </svg>
-                    </button>
-                </div>
-                <hr>
-                <div class="row row-cols-1 row-cols-lg-3 m-auto">
-                    <!-- invoice no -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">เลขที่เอกสาร</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice" disabled
-                                v-model="invoice_no" aria-describedby="basic-addon1">
-                        </div>
-                    </div>
-                    <!-- input date -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">วันที่รับสินค้าเข้า</span>
-                            <input type="date" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="input_date">
-                        </div>
-                    </div>
-                    <!-- remark -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">หมายเหตุ</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="remark">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- shop info -->
-            <div class="col mt-1">
-                <!-- <hr> -->
-                <div class="row row-cols-1 row-cols-lg-2 m-auto" v-show="show_shop">
-                    <!-- shop id -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">รหัสผู้ผลิต</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_id">
-                        </div>
-                    </div>
-                    <!-- shop name -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">ชื่อ</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_name">
-                        </div>
-                    </div>
-                    <!-- shop address -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">ที่อยู่</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_address">
-                        </div>
-                    </div>
-                    <!-- contact -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">ผู้ติดต่อ</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_contact">
-                        </div>
-                    </div>
-                    <!-- phone -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">เบอร์โทร</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_phone">
-                        </div>
-                    </div>
-                    <!-- fax -->
-                    <div class="col mt-2">
-                        <div class="input-group ">
-                            <span class="input-group-text" id="basic-addon1">แฟกซ์</span>
-                            <input type="text" class="form-control" placeholder="" aria-label="invoice"
-                                aria-describedby="basic-addon1" v-model="shop_fax">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <!-- end shop information -->
 
-        <!-- product input data -->
-        <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
-            <!-- product data -->
-            <div class="col">
-                <!-- product tags -->
-                <div class=" d-flex flex-row align-items-center justify-content-between">
-                    <h3>ข้อมูลสินค้า</h3>
-                </div>
-                <hr>
-                <div class="row row-cols-1 row-cols-lg-2 m-auto">
-                    <!-- product name -->
-                    <div class="col mt-2">
-                        <label for="product-name" class="form-label">ชื่อสินค้า</label>
-                        <input type="text" class="form-control " id="product-name" required v-model="product_name"
-                            :class="{ 'is-invalid': !product_name_isValid }">
 
-                    </div>
-                    <!-- product type -->
-                    <div class="col mt-2">
-                        <label for="product-type" class="form-label">ประเภทสินค้า</label>
-                        <div class="input-group has-validation">
-                            <input list="product-types" type="text" class="form-control " id="product-type"
-                                aria-describedby="inputGroupPrepend" required v-model="product_type"
-                                :class="{ 'is-invalid': !product_type_isValid }">
-                            <datalist id="product-types">
-                                <option v-for="item in product_cats_list" :value="item.category">
-                                
-                            </datalist>
-                        </div>
-                    </div>
-                </div>
-                <div class="row row-cols-1 m-auto">
-                    <!-- product descriptions -->
-                    <div class="col mt-2">
-                        <label for="product-desc" class="form-label">รายละเอียดสินค้า</label>
-                        <input type="text" class="form-control " id="product-desc" required v-model="product_detail"
-                            :class="{ 'is-invalid': !product_detail_isValid }">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Kanit:wght@400&amp;family=Sarabun:wght@400&amp;display=swap");
 
-                    </div>
-                </div>
-                <div class="row row-cols-1 row-cols-lg-6 m-auto">
-                    <!-- product cost -->
-                    <div class="col mt-2">
-                        <label for="product-cost" class="form-label">ต้นทุน</label>
-                        <input type="number" class="form-control" id="product-cost" min="0" required v-model="cost"
-                            :class="{ 'is-invalid': !cost_isValid }">
+        * {
+            font-family: "kanit";
+        }
 
-                    </div>
-                    <!-- product price -->
-                    <div class="col mt-2">
-                        <label for="product-price" class="form-label">ราคา</label>
-                        <input type="number" class="form-control" id="product-price" min="0" required v-model="price"
-                            :class="{ 'is-invalid': !price_isValid }">
+        html,
+        body {
+            height: 100%;
+        }
 
-                    </div>
-                    <!-- product unit -->
-                    <div class="col mt-2">
-                        <label for="product-unit" class="form-label">จำนวน</label>
-                        <input type="number" class="form-control" id="product-unit" min=" 0" required v-model="unit"
-                            :class="{ 'is-invalid': !unit_isValid }">
+        a,
+        a:focus,
+        a:hover {
+            color: #fff;
+        }
 
-                    </div>
-                    <!-- total price -->
-                    <div class="col mt-2">
-                        <label for="total-price" class="form-label">รวม</label>
-                        <input type="number" class="form-control" id="total-price" v-model="total" min="0" disabled>
+        .main-container {
+            max-width: 42em;
+        }
 
-                    </div>
-                    <!-- discounts -->
-                    <div class="col mt-2">
-                        <label for="discount" class="form-label">ส่วนลด</label>
-                        <input type="number" class="form-control" id="discount" min="0" required v-model="discount"
-                            :class="{ 'is-invalid':!discount_isValid }">
+        .header {
+            margin-bottom: 2rem;
+        }
 
-                    </div>
-                    <!-- total -->
-                    <div class="col mt-2">
-                        <label for="total" class="form-label">รวมทั้งสิ้น</label>
-                        <input type="number" class="form-control" id="total" min="0" disabled v-model="final_total">
-                    </div>
+        .header-brand {
+            margin-bottom: 0;
+        }
+
+        .nav-header .nav-link {
+            padding: 0.25rem 0;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            background-color: transparent;
+            border-bottom: 0.1rem solid transparent;
+        }
+
+        .nav-header .nav-link:hover,
+        .nav-header .nav-link:focus {
+            border-bottom-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-header .active {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        .cover {
+            padding: 1.5rem;
+        }
+
+        .cover .btn-lg {
+            padding: 0.75rem 1.25rem;
+            font-weight: 700;
+        }
+
+        .footer {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tableFixHead {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+            overflow-y: auto;
+
+            /* make the table scrollable if height is more than 200 px  */
+            height: 500px;
+
+            /* gives an initial height of 200px to the table */
+        }
+
+        .tableFixHead thead th {
+            position: sticky;
+            /* make the table heads sticky */
+            top: -1px;
+            /* table head will be placed from the top of the table and sticks to it */
+        }
+
+        .tableFixHead::-webkit-scrollbar {
+            display: none;
+        }
+
+        table {
+            border-collapse: collapse;
+            /* make the table borders collapse to each other */
+            width: 100%;
+        }
+
+        th,
+        td {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <main class="p-3 bg-light container rounded-2" id="app">
+        <form action="" class="py-5 ">
+            <!-- header -->
+            <div class="row row-cols-1 m-auto">
+                <div class="col">
+                    <h1 class="text-center ">ลงทะเบียนสินค้าเข้า</h1>
                 </div>
             </div>
-            <!-- input button -->
-            <div class="col mt-2">
-                <hr>
-                <div class="row m-auto row-cols-1 row-cols-lg-2">
-                    <div class="col d-none d-lg-block"></div>
-                    <div class="col">
-                        <div class="d-flex flex-row align-items-center text-white justify-content-around">
-                            <button type="button" class="btn btn-primary  w-100" @click="addProducts($event)">
-                                เพิ่ม
-                            </button>
-                            <button type="button" class="btn btn-warning mx-1 text-white w-100" @click="editProduct()">
-                                แก้ไข
-                            </button>
-                            <button type="button" class="btn btn-danger  w-100" @click="deleteProduct()">
-                                ลบ
-                            </button>
+            <!-- header -->
+            <hr>
+            <!-- shop information -->
+            <div class="row row-cols-1 m-auto border py-2 rounded-3">
+                <!-- invoices info -->
+                <div class="col mt-1">
+                    <div class=" d-flex flex-row align-items-center justify-content-between">
+                        <h3>ข้อมูลเอกสาร</h3>
+                        <button class="btn" type="button" @click="showShopData($event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-dash-square-dotted" viewBox="0 0 16 16">
+                                <path
+                                    d="M2.5 0c-.166 0-.33.016-.487.048l.194.98A1.51 1.51 0 0 1 2.5 1h.458V0H2.5zm2.292 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zm1.833 0h-.916v1h.916V0zm1.834 0h-.917v1h.917V0zm1.833 0h-.917v1h.917V0zM13.5 0h-.458v1h.458c.1 0 .199.01.293.029l.194-.981A2.51 2.51 0 0 0 13.5 0zm2.079 1.11a2.511 2.511 0 0 0-.69-.689l-.556.831c.164.11.305.251.415.415l.83-.556zM1.11.421a2.511 2.511 0 0 0-.689.69l.831.556c.11-.164.251-.305.415-.415L1.11.422zM16 2.5c0-.166-.016-.33-.048-.487l-.98.194c.018.094.028.192.028.293v.458h1V2.5zM.048 2.013A2.51 2.51 0 0 0 0 2.5v.458h1V2.5c0-.1.01-.199.029-.293l-.981-.194zM0 3.875v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 5.708v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zM0 7.542v.916h1v-.916H0zm15 .916h1v-.916h-1v.916zM0 9.375v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .916v.917h1v-.917H0zm16 .917v-.917h-1v.917h1zm-16 .917v.458c0 .166.016.33.048.487l.98-.194A1.51 1.51 0 0 1 1 13.5v-.458H0zm16 .458v-.458h-1v.458c0 .1-.01.199-.029.293l.981.194c.032-.158.048-.32.048-.487zM.421 14.89c.183.272.417.506.69.689l.556-.831a1.51 1.51 0 0 1-.415-.415l-.83.556zm14.469.689c.272-.183.506-.417.689-.69l-.831-.556c-.11.164-.251.305-.415.415l.556.83zm-12.877.373c.158.032.32.048.487.048h.458v-1H2.5c-.1 0-.199-.01-.293-.029l-.194.981zM13.5 16c.166 0 .33-.016.487-.048l-.194-.98A1.51 1.51 0 0 1 13.5 15h-.458v1h.458zm-9.625 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zm1.834 0h.916v-1h-.916v1zm1.833 0h.917v-1h-.917v1zm1.833 0h.917v-1h-.917v1zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <hr>
+                    <div class="row row-cols-1 row-cols-lg-3 m-auto">
+                        <!-- invoice no -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">เลขที่เอกสาร</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice" disabled
+                                    v-model="invoice_no" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <!-- input date -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">วันที่รับสินค้าเข้า</span>
+                                <input type="date" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="input_date">
+                            </div>
+                        </div>
+                        <!-- remark -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">หมายเหตุ</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="remark">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!-- end product input data -->
-        <hr>
-        <!-- product show list -->
-        <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
-            <div class="col">
-                <table class="table table-hover ">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">ชื่อสินค้า</th>
-                            <th scope="col">ประเภทสินค้า</th>
-                            <th scope="col">รายละเอียดสินค้า</th>
-                            <th scope="col">ต้นทุน</th>
-                            <th scope="col">ราคา</th>
-                            <th scope="col">จำนวน</th>
-                            <th scope="col">ส่วนลด</th>
-                            <th scope="col">รวมทั้งหมด</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in product_list" :key="index" @click="selectProduct(index)">
-                            <td>[{ index+1 }]</td>
-                            <td>[{ item.product_name }]</td>
-                            <td>[{ item.product_type }]</td>
-                            <td>[{ item.product_detail }]</td>
-                            <td>[{ item.cost }]</td>
-                            <td>[{ item.price }]</td>
-                            <td>[{ item.unit }]</td>
-                            <td>[{ item.discount }]</td>
-                            <td>[{ item.final_total }]</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- end product show list -->
-        <hr>
-        <!-- submit -->
-        <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
-            <!-- total values -->
-            <div class="col">
-                <!-- values -->
-                <div class="row row-cols-4 m-auto">
-                    <!-- total cost -->
-                    <div class="col mt-2">
-                        <label for="total-cost" class="form-label">ต้นทุนทั้งหมด</label>
-                        <input type="number" class="form-control" id="inv_cost" min="0" disabled v-model="inv_cost">
-                        <small class="invalid-feedback">
-                            Please provide a valid city.
-                        </small>
-                    </div>
-                    <!-- total price -->
-                    <div class="col mt-2">
-                        <label for="total-price" class="form-label">รวมเป็นเงิน</label>
-                        <input type="number" class="form-control" id="total-price" min="0" disabled v-model="inv_price">
-                        <small class="invalid-feedback">
-                            Please provide a valid city.
-                        </small>
-                    </div>
-                    <!-- total discount -->
-                    <div class="col mt-2">
-                        <label for="total-discount" class="form-label">ส่วนลด</label>
-                        <input type="number" class="form-control" id="total-discount" min="0" disabled v-model="inv_discount">
-                        <small class="invalid-feedback">
-                            Please provide a valid city.
-                        </small>
-                    </div>
-                    <!-- total final -->
-                    <div class="col mt-2">
-                        <label for="total-final" class="form-label">รวมทั้งสิ้น</label>
-                        <input type="number" class="form-control" id="total-final" min="0" disabled v-model="inv_total">
-                        <small class="invalid-feedback">
-                            Please provide a valid city.
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="col mt-2">
-                <hr>
-                <div class="row m-auto row-cols-1 row-cols-lg-2">
-                    <div class="col d-none d-lg-block"></div>
-                    <div class="col">
-                        <div class="d-flex flex-row align-items-center text-white justify-content-between">
-                            <button type="button" class="btn btn-danger mx-1 text-white w-100">
-                                ยกเลิก
-                            </button>
-                            <button type="button" class="btn btn-success w-100" @click="onSaveData($event)">
-                                บันทึก
-                            </button>
+                <!-- shop info -->
+                <div class="col mt-1">
+                    <!-- <hr> -->
+                    <div class="row row-cols-1 row-cols-lg-2 m-auto" v-show="show_shop">
+                        <!-- shop id -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">รหัสผู้ผลิต</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_id">
+                            </div>
+                        </div>
+                        <!-- shop name -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">ชื่อ</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_name">
+                            </div>
+                        </div>
+                        <!-- shop address -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">ที่อยู่</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_address">
+                            </div>
+                        </div>
+                        <!-- contact -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">ผู้ติดต่อ</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_contact">
+                            </div>
+                        </div>
+                        <!-- phone -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">เบอร์โทร</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_phone">
+                            </div>
+                        </div>
+                        <!-- fax -->
+                        <div class="col mt-2">
+                            <div class="input-group ">
+                                <span class="input-group-text" id="basic-addon1">แฟกซ์</span>
+                                <input type="text" class="form-control" placeholder="" aria-label="invoice"
+                                    aria-describedby="basic-addon1" v-model="shop_fax">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-    </form>
-</main>
-<script>
-    const { createApp, ref, computed } = Vue;
-    const App = createApp({
-        delimiters: ["[{", "}]"],
-        data() {
-            return {
-                invoice_no: null,
-                input_date: null,
-                remark: null,
-
-                shop_id: null,
-                shop_name: null,
-                shop_address: null,
-                shop_contact: null,
-                shop_phone: null,
-                shop_fax: null,
-
-                product_list: new Array(),
-
-                product_name: "",
-                product_type: "",
-                product_detail: "",
-
-                cost: 0,
-                price: 0,
-                unit: 0,
-                total: computed(() => {
-                    return (this.price - this.cost) * this.unit;
-                }),
-                discount: 0,
-                final_total: computed(() => {
-                    return this.total - this.discount;
-                }),
-
-                index_selector: null,
-
-                show_shop: true,
-
-                inv_cost: computed(() => {
-                    var cost = 0;
-                    for (let c of this.product_list) {
-                        cost += c.cost;
-                    }
-
-                    return cost;
-                }),
-                inv_price: computed(() => {
-                    var price = 0;
-                    for (let c of this.product_list) {
-                        price += c.price;
-                    }
-
-                    return price
-                }),
-                inv_discount: computed(() => {
-                    var discount = 0;
-                    for (let c of this.product_list){
-                        discount += c.discount
-                    }
-
-                    return discount
-                }),
-                inv_total: computed(() => {
-                    var final_total = 0;
-                    for (let c of this.product_list){
-                        final_total += c.final_total
-                    }
-
-                    return final_total
-                }),
-
-                product_name_isValid: true,
-                product_type_isValid: true,
-                product_detail_isValid: true,
-                cost_isValid: true,
-                price_isValid: true,
-                unit_isValid: true,
-                total_isValid: true,
-                discount_isValid: true,
-                final_total_isValid: true,
-
-                add_isValid: true,
-
-                isValid: true,
-
-                product_cats_list:null,
-
-            };
-        },
-        mounted() {
-            console.log("on mounted!");
-            axios
-                .get(`{% url 'get-product-categories' %}`)
-                .then((response)=>{
-                    this.product_cats_list = response.data
-                })
-        },
-
-        methods: {
-            setAmount() {
-                this.total = this.unit * this.price;
-                this.final_total = this.total - discount;
-
+            <hr>
+            <!-- end shop information -->
+            
+            <!-- product input data -->
+            <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
+                <!-- product data -->
+                <div class="col">
+                    <!-- product tags -->
+                    <div class=" d-flex flex-row align-items-center justify-content-between">
+                        <h3>ข้อมูลสินค้า</h3>
+                    </div>
+                    <hr>
+                    <div class="row row-cols-1 row-cols-lg-2 m-auto">
+                        <!-- product name -->
+                        <div class="col mt-2">
+                            <label for="product-name" class="form-label">ชื่อสินค้า</label>
+                            <input type="text" class="form-control " id="product-name" required v-model="product_name"
+                                :class="{ 'is-invalid': !product_name_isValid }">
+    
+                        </div>
+                        <!-- product type -->
+                        <div class="col mt-2">
+                            <label for="product-type" class="form-label">ประเภทสินค้า</label>
+                            <div class="input-group has-validation">
+                                <input list="product-types" type="text" class="form-control " id="product-type"
+                                    aria-describedby="inputGroupPrepend" required v-model="product_type"
+                                    :class="{ 'is-invalid': !product_type_isValid }">
+                                <datalist id="product-types">
+                                    <option v-for="item in product_cats_list" :value="item.category">
+                                    
+                                </datalist>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 m-auto">
+                        <!-- product descriptions -->
+                        <div class="col mt-2">
+                            <label for="product-desc" class="form-label">รายละเอียดสินค้า</label>
+                            <input type="text" class="form-control " id="product-desc" required v-model="product_detail"
+                                :class="{ 'is-invalid': !product_detail_isValid }">
+    
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-lg-6 m-auto">
+                        <!-- product cost -->
+                        <div class="col mt-2">
+                            <label for="product-cost" class="form-label">ต้นทุน</label>
+                            <input type="number" class="form-control" id="product-cost" min="0" required v-model="cost"
+                                :class="{ 'is-invalid': !cost_isValid }">
+    
+                        </div>
+                        <!-- product price -->
+                        <div class="col mt-2">
+                            <label for="product-price" class="form-label">ราคา</label>
+                            <input type="number" class="form-control" id="product-price" min="0" required v-model="price"
+                                :class="{ 'is-invalid': !price_isValid }">
+    
+                        </div>
+                        <!-- product unit -->
+                        <div class="col mt-2">
+                            <label for="product-unit" class="form-label">จำนวน</label>
+                            <input type="number" class="form-control" id="product-unit" min=" 0" required v-model="unit"
+                                :class="{ 'is-invalid': !unit_isValid }">
+    
+                        </div>
+                        <!-- total price -->
+                        <div class="col mt-2">
+                            <label for="total-price" class="form-label">รวม</label>
+                            <input type="number" class="form-control" id="total-price" v-model="total" min="0" disabled>
+    
+                        </div>
+                        <!-- discounts -->
+                        <div class="col mt-2">
+                            <label for="discount" class="form-label">ส่วนลด</label>
+                            <input type="number" class="form-control" id="discount" min="0" required v-model="discount"
+                                :class="{ 'is-invalid':!discount_isValid }">
+    
+                        </div>
+                        <!-- total -->
+                        <div class="col mt-2">
+                            <label for="total" class="form-label">รวมทั้งสิ้น</label>
+                            <input type="number" class="form-control" id="total" min="0" disabled v-model="final_total">
+                        </div>
+                    </div>
+                </div>
+                <!-- input button -->
+                <div class="col mt-2">
+                    <hr>
+                    <div class="row m-auto row-cols-1 row-cols-lg-2">
+                        <div class="col d-none d-lg-block"></div>
+                        <div class="col">
+                            <div class="d-flex flex-row align-items-center text-white justify-content-around">
+                                <button type="button" class="btn btn-primary  w-100" @click="addProducts($event)">
+                                    เพิ่ม
+                                </button>
+                                <button type="button" class="btn btn-warning mx-1 text-white w-100" @click="editProduct()">
+                                    แก้ไข
+                                </button>
+                                <button type="button" class="btn btn-danger  w-100" @click="deleteProduct()">
+                                    ลบ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end product input data -->
+            <hr>
+            <!-- product show list -->
+            <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
+                <div class="col">
+                    <table class="table table-hover ">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">ชื่อสินค้า</th>
+                                <th scope="col">ประเภทสินค้า</th>
+                                <th scope="col">รายละเอียดสินค้า</th>
+                                <th scope="col">ต้นทุน</th>
+                                <th scope="col">ราคา</th>
+                                <th scope="col">จำนวน</th>
+                                <th scope="col">ส่วนลด</th>
+                                <th scope="col">รวมทั้งหมด</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in product_list" :key="index" @click="selectProduct(index)">
+                                <td>[{ index+1 }]</td>
+                                <td>[{ item.product_name }]</td>
+                                <td>[{ item.product_type }]</td>
+                                <td>[{ item.product_detail }]</td>
+                                <td>[{ item.cost }]</td>
+                                <td>[{ item.price }]</td>
+                                <td>[{ item.unit }]</td>
+                                <td>[{ item.discount }]</td>
+                                <td>[{ item.final_total }]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- end product show list -->
+            <hr>
+            <!-- submit -->
+            <div class="row row-cols-1 m-auto border mt-3 py-2 rounded-3">
+                <!-- total values -->
+                <div class="col">
+                    <!-- values -->
+                    <div class="row row-cols-4 m-auto">
+                        <!-- total cost -->
+                        <div class="col mt-2">
+                            <label for="total-cost" class="form-label">ต้นทุนทั้งหมด</label>
+                            <input type="number" class="form-control" id="inv_cost" min="0" disabled v-model="inv_cost">
+                            <small class="invalid-feedback">
+                                Please provide a valid city.
+                            </small>
+                        </div>
+                        <!-- total price -->
+                        <div class="col mt-2">
+                            <label for="total-price" class="form-label">รวมเป็นเงิน</label>
+                            <input type="number" class="form-control" id="total-price" min="0" disabled v-model="inv_price">
+                            <small class="invalid-feedback">
+                                Please provide a valid city.
+                            </small>
+                        </div>
+                        <!-- total discount -->
+                        <div class="col mt-2">
+                            <label for="total-discount" class="form-label">ส่วนลด</label>
+                            <input type="number" class="form-control" id="total-discount" min="0" disabled v-model="inv_discount">
+                            <small class="invalid-feedback">
+                                Please provide a valid city.
+                            </small>
+                        </div>
+                        <!-- total final -->
+                        <div class="col mt-2">
+                            <label for="total-final" class="form-label">รวมทั้งสิ้น</label>
+                            <input type="number" class="form-control" id="total-final" min="0" disabled v-model="inv_total">
+                            <small class="invalid-feedback">
+                                Please provide a valid city.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mt-2">
+                    <hr>
+                    <div class="row m-auto row-cols-1 row-cols-lg-2">
+                        <div class="col d-none d-lg-block"></div>
+                        <div class="col">
+                            <div class="d-flex flex-row align-items-center text-white justify-content-between">
+                                <button type="button" class="btn btn-danger mx-1 text-white w-100">
+                                    ยกเลิก
+                                </button>
+                                <button type="button" class="btn btn-success w-100" @click="onSaveData($event)">
+                                    บันทึก
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        </form>
+    </main>
+    <script>
+        const { createApp, ref, computed } = Vue;
+        const App = createApp({
+            delimiters: ["[{", "}]"],
+            data() {
+                return {
+                    invoice_no: null,
+                    input_date: null,
+                    remark: null,
+    
+                    shop_id: null,
+                    shop_name: null,
+                    shop_address: null,
+                    shop_contact: null,
+                    shop_phone: null,
+                    shop_fax: null,
+    
+                    product_list: new Array(),
+    
+                    product_name: "",
+                    product_type: "",
+                    product_detail: "",
+    
+                    cost: 0,
+                    price: 0,
+                    unit: 0,
+                    total: computed(() => {
+                        return (this.price - this.cost) * this.unit;
+                    }),
+                    discount: 0,
+                    final_total: computed(() => {
+                        return this.total - this.discount;
+                    }),
+    
+                    index_selector: null,
+    
+                    show_shop: true,
+    
+                    inv_cost: computed(() => {
+                        var cost = 0;
+                        for (let c of this.product_list) {
+                            cost += c.cost;
+                        }
+    
+                        return cost;
+                    }),
+                    inv_price: computed(() => {
+                        var price = 0;
+                        for (let c of this.product_list) {
+                            price += c.price;
+                        }
+    
+                        return price
+                    }),
+                    inv_discount: computed(() => {
+                        var discount = 0;
+                        for (let c of this.product_list){
+                            discount += c.discount
+                        }
+    
+                        return discount
+                    }),
+                    inv_total: computed(() => {
+                        var final_total = 0;
+                        for (let c of this.product_list){
+                            final_total += c.final_total
+                        }
+    
+                        return final_total
+                    }),
+    
+                    product_name_isValid: true,
+                    product_type_isValid: true,
+                    product_detail_isValid: true,
+                    cost_isValid: true,
+                    price_isValid: true,
+                    unit_isValid: true,
+                    total_isValid: true,
+                    discount_isValid: true,
+                    final_total_isValid: true,
+    
+                    add_isValid: true,
+    
+                    isValid: true,
+    
+                    product_cats_list:null,
+    
+                };
             },
-            showShopData(e) {
-                e.preventDefault();
-                if (this.show_shop) {
-                    this.show_shop = false;
-                } else {
-                    this.show_shop = true;
-                }
+            mounted() {
+                console.log("on mounted!");
+                axios
+                    .get(`{% url 'get-product-categories' %}`)
+                    .then((response)=>{
+                        this.product_cats_list = response.data
+                    })
             },
-
-            addProducts(e) {
-                e.preventDefault();
-
-                this.add_isValid = true;
-
-                this.product_name_isValid = true;
-                if (this.product_name == "") {
-                    this.product_name_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                this.product_type_isValid = true;
-                if (this.product_type == "") {
-                    this.product_type_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                this.product_detail_isValid = true;
-                if (this.product_detail == "") {
-                    this.product_detail_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                this.cost_isValid = true;
-                if (this.cost == 0) {
-                    this.cost_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                this.price_isValid = true;
-                if (this.price == 0) {
-                    this.price_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                this.unit_isValid = true;
-                if (this.unit == 0) {
-                    this.unit_isValid = false;
-                    this.add_isValid = false;
-                }
-
-                if (this.add_isValid) {
-                    let product_obj = {
-                        product_name: this.product_name,
-                        product_detail: this.product_detail,
-                        product_type: this.product_type,
-                        cost: this.cost,
-                        price: this.price,
-                        unit: this.unit,
-                        total: this.total,
-                        discount: this.discount,
-                        final_total: this.final_total,
-                    };
+    
+            methods: {
+                setAmount() {
+                    this.total = this.unit * this.price;
+                    this.final_total = this.total - discount;
+    
+                },
+                showShopData(e) {
+                    e.preventDefault();
+                    if (this.show_shop) {
+                        this.show_shop = false;
+                    } else {
+                        this.show_shop = true;
+                    }
+                },
+    
+                addProducts(e) {
+                    e.preventDefault();
+    
+                    this.add_isValid = true;
+    
+                    this.product_name_isValid = true;
+                    if (this.product_name == "") {
+                        this.product_name_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    this.product_type_isValid = true;
+                    if (this.product_type == "") {
+                        this.product_type_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    this.product_detail_isValid = true;
+                    if (this.product_detail == "") {
+                        this.product_detail_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    this.cost_isValid = true;
+                    if (this.cost == 0) {
+                        this.cost_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    this.price_isValid = true;
+                    if (this.price == 0) {
+                        this.price_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    this.unit_isValid = true;
+                    if (this.unit == 0) {
+                        this.unit_isValid = false;
+                        this.add_isValid = false;
+                    }
+    
+                    if (this.add_isValid) {
+                        let product_obj = {
+                            product_name: this.product_name,
+                            product_detail: this.product_detail,
+                            product_type: this.product_type,
+                            cost: this.cost,
+                            price: this.price,
+                            unit: this.unit,
+                            total: this.total,
+                            discount: this.discount,
+                            final_total: this.final_total,
+                        };
+                        try {
+                            this.product_list.push(product_obj);
+                            this.product_type = "";
+                            this.product_name = "";
+                            this.product_detail = "";
+                            this.cost = 0;
+                            this.price = 0;
+                            this.unit = 0;
+                            this.discount = 0;
+                        }
+                        catch (error) {
+                            console.error(error);
+    
+                        }
+                    }
+                },
+    
+                selectProduct(index) {
+                    this.index_selector = index;
+    
+                    let select = this.product_list[index];
+    
+                    this.product_name = select.product_name;
+                    this.product_type = select.product_type;
+                    this.product_detail = select.product_detail;
+                    this.cost = select.cost;
+                    this.price = select.price;
+                    this.unit = select.unit;
+    
+                    this.discount = select.discount;
+    
+                },
+    
+                deleteProduct() {
+                    let index = this.index_selector;
+    
+                    this.product_list.splice(index, 1);
+                    this.index_selector = null;
+                    this.product_name = "";
+                    this.product_type = "";
+                    this.product_detail = "";
+                    this.cost = 0;
+                    this.price = 0;
+                    this.unit = 0;
+    
+                    this.discount = 0;
+    
+                },
+    
+                editProduct() {
                     try {
-                        this.product_list.push(product_obj);
+    
+                        let index = this.index_selector;
+    
+                        this.product_list[index].product_name = this.product_name;
+                        this.product_list[index].product_type = this.product_type;
+                        this.product_list[index].product_detail = this.product_detail;
+                        this.product_list[index].cost = this.cost;
+                        this.product_list[index].price = this.price;
+                        this.product_list[index].unit = this.unit;
+                        this.product_list[index].total = this.total;
+                        this.product_list[index].discount = this.discount;
+                        this.product_list[index].final_total = this.final_total;
+    
                         this.product_type = "";
                         this.product_name = "";
                         this.product_detail = "";
                         this.cost = 0;
                         this.price = 0;
                         this.unit = 0;
+    
                         this.discount = 0;
+    
                     }
-                    catch (error) {
-                        console.error(error);
-
+                    catch {
+    
                     }
+    
+                },
+    
+                onSaveData(e) {
+                    e.preventDefault();
+    
+                    this.isValid = true;
+    
+                    if (this.product_list.length <= 0) {
+                        this.isValid = false;
+                    }
+    
+                    if (this.isValid) {
+                        const data = JSON.stringify(Object.assign({}, this.product_list));
+                        const form_data = new FormData();
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append('products', data);
+                        form_data.append('total_cost', this.inv_cost)
+                        form_data.append('total_price', this.inv_price)
+                        form_data.append('total_discount', this.inv_discount)
+                        form_data.append('total', this.inv_total)
+                        form_data.append("remark", '-');
+    
+                        axios
+                            .post("{% url 'create-InputData-api' %}", form_data)
+                            .then((response) => {
+                                if (response.data['status']) {
+                                    this.product_list = new Array();
+                                    alert("บันทึกข้อมูลสำเร็จ");
+                                }
+                                else {
+                                    this.product_list = new Array();
+    
+                                }
+                            });
+                    }
+    
                 }
             },
-
-            selectProduct(index) {
-                this.index_selector = index;
-
-                let select = this.product_list[index];
-
-                this.product_name = select.product_name;
-                this.product_type = select.product_type;
-                this.product_detail = select.product_detail;
-                this.cost = select.cost;
-                this.price = select.price;
-                this.unit = select.unit;
-
-                this.discount = select.discount;
-
-            },
-
-            deleteProduct() {
-                let index = this.index_selector;
-
-                this.product_list.splice(index, 1);
-                this.index_selector = null;
-                this.product_name = "";
-                this.product_type = "";
-                this.product_detail = "";
-                this.cost = 0;
-                this.price = 0;
-                this.unit = 0;
-
-                this.discount = 0;
-
-            },
-
-            editProduct() {
-                try {
-
-                    let index = this.index_selector;
-
-                    this.product_list[index].product_name = this.product_name;
-                    this.product_list[index].product_type = this.product_type;
-                    this.product_list[index].product_detail = this.product_detail;
-                    this.product_list[index].cost = this.cost;
-                    this.product_list[index].price = this.price;
-                    this.product_list[index].unit = this.unit;
-                    this.product_list[index].total = this.total;
-                    this.product_list[index].discount = this.discount;
-                    this.product_list[index].final_total = this.final_total;
-
-                    this.product_type = "";
-                    this.product_name = "";
-                    this.product_detail = "";
-                    this.cost = 0;
-                    this.price = 0;
-                    this.unit = 0;
-
-                    this.discount = 0;
-
-                }
-                catch {
-
-                }
-
-            },
-
-            onSaveData(e) {
-                e.preventDefault();
-
-                this.isValid = true;
-
-                if (this.product_list.length <= 0) {
-                    this.isValid = false;
-                }
-
-                if (this.isValid) {
-                    const data = JSON.stringify(Object.assign({}, this.product_list));
-                    const form_data = new FormData();
-                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
-                    form_data.append('products', data);
-                    form_data.append('total_cost', this.inv_cost)
-                    form_data.append('total_price', this.inv_price)
-                    form_data.append('total_discount', this.inv_discount)
-                    form_data.append('total', this.inv_total)
-                    form_data.append("remark", '-');
-
-                    axios
-                        .post("{% url 'create-InputData-api' %}", form_data)
-                        .then((response) => {
-                            if (response.data['status']) {
-                                this.product_list = new Array();
-                                alert("บันทึกข้อมูลสำเร็จ");
-                            }
-                            else {
-                                this.product_list = new Array();
-
-                            }
-                        });
-                }
-
-            }
-        },
-    });
-
-    App.mount("#app");
-
-</script>
-
-{% endblock content %}
+        });
+    
+        App.mount("#app");
+    
+    </script>
+</body>
+</html>

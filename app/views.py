@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 
 
 def getUser(request):
+    
     return request.user.is_authenticated
 
 
 def toIndex(request):
-
+    
     return redirect('homepage')
 
 
@@ -26,7 +27,7 @@ def homepage(request):
 @login_required(login_url='/page/login/')
 def show_product(request):
 
-    return render(request, 'product/invoice.html')
+    return render(request, 'product/base.html')
 
 @login_required(login_url='/page/login/')
 def create_product(request):
@@ -37,7 +38,6 @@ def create_product(request):
 def show_shop(request):
 
     return render(request, 'shop/shop_show.html')
-
 
 def create_shop(request):
 
