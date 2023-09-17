@@ -24,8 +24,7 @@ from app import views as app
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', app.toIndex),
-    path('page/', include('app.urls')),
+    path('', include('app.urls')),
     path('auth-api/', include('stock.urls')),
 ]
 

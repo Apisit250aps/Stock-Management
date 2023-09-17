@@ -207,7 +207,6 @@ def createInputData(request):
     totals = request.data['total']
     print(object_product)
 
-    
     try:
 
         invoice = models.InputInvoice.objects.create(
@@ -218,7 +217,7 @@ def createInputData(request):
             total_discount=total_discount,
             remark=remark
         )
-        try :
+        try:
             for products in object_product.values():
                 product_code = productCode()
                 product_name = products['product_name']
@@ -398,9 +397,9 @@ def getProductCategory(request):
         models.ProductCategory.objects.all(), many=True).data
 
     return Response(
-        
+
         data=data
-        
+
     )
 
 
@@ -447,34 +446,43 @@ def getProductShop(request):
             }
         }
     )
-    
-    
+
+
 @csrf_exempt
 @api_view(["GET",])
 @permission_classes((AllowAny,))
 def getShopInputInvoices(request):
     user = User.objects.get(username=request.user.username)
     shop = models.ShopData.objects.get(user=user)
-    
-    invoice_data = serializers.InputInvoiceSerializer(models.InputInvoice.objects.filter(shop=shop), many=True).data
+
+    invoice_data = serializers.InputInvoiceSerializer(
+        models.InputInvoice.objects.filter(shop=shop).order_by('-id'), many=True).data
     invoices = []
     for invoice in invoice_data:
-        input_data = serializers.InputDataSerializer(models.InputData.objects.filter(invoice=int(invoice['id'])), many=True).data
-       
-        invoice['shop'] = models.ShopData.objects.get(id=int(invoice['shop'])).shop_name
+        input_data = serializers.InputDataSerializer(
+            models.InputData.objects.filter(invoice=int(invoice['id'])), many=True).data
+
+        invoice['shop'] = models.ShopData.objects.get(
+            id=int(invoice['shop'])).shop_name
         input_information = []
         for data in input_data:
-            data['product'] = serializers.ProductDataSerializer(models.ProductData.objects.filter(id=int(data['product'])), many=True).data[0]
-            data['product']['product_category'] = models.ProductCategory.objects.get(id=int(data['product']['product_category'])).category
+            data['product'] = serializers.ProductDataSerializer(
+                models.ProductData.objects.filter(id=int(data['product'])), many=True).data[0]
+            data['product']['product_category'] = models.ProductCategory.objects.get(
+                id=int(data['product']['product_category'])).category
             input_information.append(data)
-            
+
         invoice["data_input"] = input_information
-        
+
         invoices.append(invoice)
-        
+
     return Response(
-        data=invoices
+        {
+            "status":True,
+            "data":invoices
+        }
     )
+
 
 @csrf_exempt
 @api_view(["GET",])

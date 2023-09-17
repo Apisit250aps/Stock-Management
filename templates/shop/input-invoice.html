@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+<!-- blocks -->
+{% block content %}
+<!-- content here! -->
+<div class="card">
+    <h5 class="card-header">Input Invoice</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-hover table-borderless">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Invoice Code</th>
+                    <th>Total Price</th>
+                    <th>Total Cost</th>
+                    <th>Total Discount</th>
+                    <th>Input Amount</th>
+                    <th>Input Date</th>
+                    <th>Input Time</th>
+                    <th>Shop</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in invoice_data" :key="index">
+                    <td>[{index+1}]</td>
+                    <td>
+                        <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{ item.invoice_no }]</strong>
+                    </td>
+                    <td>[{item.total_price}]</td>
+                    <td>[{item.total_cost}]</td>
+                    <td>[{item.total_discount}]</td>
+                    <td>[{item.data_input.length}]</td>
+                    <td>[{timeFormat(item.input_date).date}]</td>
+                    <td>[{timeFormat(item.input_date).time}]</td>
+                    <td>[{item.shop}]</td>
+                    <!-- <td><span class="badge bg-label-primary me-1">Active</span></td> -->
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i>
+                                    Edit</a>
+                                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
+                                    Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- script -->
+{% block script %}
+<!-- script here -->
+<script>
+    const { createApp, ref, computed } = Vue;
+    createApp(
+        {
+            delimiters: ["[{", "}]"],
+            data() {
+
+                return {
+                    page:"shop",
+                    type:'input-invoice',
+                    invoice_data: null,
+                };
+            },
+            mounted() {
+                axios(
+                    {
+                        method: "get",
+                        url: "{% url 'get-invoice-shop' %}"
+                    }
+                ).then((response) => {
+                    if (response.data['status']) {
+                        this.invoice_data = response.data['data'];
+                    }
+
+                }).catch((err) => {
+
+                });
+            },
+            methods:{
+                timeFormat(date){
+                    return {
+                        date:new Date(date).toLocaleDateString("en-GB"),
+                        time:new Date(date).toLocaleTimeString("en-US", { hour12: false })
+                    }
+
+                }
+            }
+        }
+    ).mount('#app')
+</script>
+{% endblock script %}
