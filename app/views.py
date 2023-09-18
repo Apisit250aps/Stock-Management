@@ -29,3 +29,7 @@ def shopInvoice(request):
 def shopProducts(request):
 
     return render(request, 'shop/all-product.html')
+
+def dataInput(request):
+    
+    return render(request, 'shop/data-input.html')

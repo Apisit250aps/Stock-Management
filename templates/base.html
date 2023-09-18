@@ -172,19 +172,9 @@
                     <div data-i18n="Without navbar">Input Invoices</div>
                   </a>
                 </li>
-                <li class="menu-item">
-                  <a href="layouts-container.html" class="menu-link">
-                    <div data-i18n="Container">Container</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-fluid.html" class="menu-link">
-                    <div data-i18n="Fluid">Fluid</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-blank.html" class="menu-link">
-                    <div data-i18n="Blank">Blank</div>
+                <li class="menu-item" :class="{'active':type=='input-data'}">
+                  <a href="{% url 'shop-data-input-page' %}" class="menu-link">
+                    <div data-i18n="Container">Add New +</div>
                   </a>
                 </li>
               </ul>
@@ -634,14 +624,14 @@
     </div>
     <!-- / Layout wrapper -->
 
-    <div class="buy-now">
+    <!-- <div class="buy-now">
       <a
         href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
         target="_blank"
         class="btn btn-danger btn-buy-now"
         >Upgrade to Pro</a
       >
-    </div>
+    </div> -->
 
     {% block script %}{% endblock script %}
 

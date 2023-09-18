@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+<!-- blocks -->
+{% block content %}
+<!-- contents here -->
+<div class="card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Products</h5>
+        <small class="text-muted float-end">Input</small>
+    </div>
+    <div class="card-body">
+        <form id="form-data">
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="product-name">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="product-name" placeholder="" v-model="name" required />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="product-category">Category</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="" id="product-category" list="category-list" v-model="category">
+                    <datalist id="category-list">
+                        <option value="1">
+                        <option value="2">
+                        <option value="3">
+                    </datalist>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-message">Product Details</label>
+                <div class="col-sm-10">
+                    <textarea id="basic-default-message" class="form-control" placeholder="" aria-label=""
+                        v-model="desc" aria-describedby="basic-icon-default-message2"></textarea>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-phone">Values</label>
+                <div class="col-sm-10">
+                    <div class=" row m-auto row-cols-1 row-cols-lg-4">
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input placeholder="cost" class=" form-control form" type="number" name="" id=""
+                                v-model="cost">
+                        </div>
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input placeholder="price" class=" form-control form" type="number" name="" id=""
+                                v-model="price">
+                        </div>
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input placeholder="unit" class=" form-control form" type="number" name="" id=""
+                                v-model="unit">
+                        </div>
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input placeholder="discount" class=" form-control form" type="number" name="" id=""
+                                v-model="discount">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label" for="basic-default-phone">Total Value</label>
+                <div class="col-sm-10">
+                    <div class=" row m-auto row-cols-1 row-cols-lg-2">
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input disabled placeholder="Total Price" class=" form-control form" type="number" name=""
+                                id="" v-model="total_price">
+                        </div>
+                        <div class="col my-1 p-0 my-lg-0">
+                            <input disabled placeholder="Total" class=" form-control form" type="number" name="" id=""
+                                v-model="total">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-end">
+                <div class="col-sm-10">
+                    <button type="button" @click="addProduct()" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<hr>
+<div class="card">
+    <h5 class="card-header">Table Caption</h5>
+    <div class="table-responsive text-nowrap">
+        <table class="table table-borderless table-hover">
+            <caption class="ms-4 px-3">
+                <div class="d-flex flex-row  justify-content-end align-items-center">
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </caption>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Product Category</th>
+                    <th>Product Description</th>
+                    <th>Unit</th>
+                    <th>Cost</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>[{final_unit}]</th>
+                    <th>[{final_cost}]</th>
+                    <th>[{final_price}]</th>
+                    <th>[{final_discount}]</th>
+                    <th>[{final_total}]</th>
+                    <th>[{final_value}]</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+            <tbody>
+                <tr v-for="(item, index) in product_list" :key="index">
+                    <td>[{index+1}]</td>
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{item.product_name}]</strong>
+                    </td>
+                    <td>[{item.product_category}]</td>
+                    <td>[{item.product_desc}]</td>
+                    <td>[{item.unit}]</td>
+                    <td>[{item.cost}]</td>
+                    <td>[{item.price}]</td>
+                    <td>[{item.discount}]</td>
+                    <td>[{item.total}]</td>
+
+                    <td>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" @click="setEdit(index)" ><i class="bx bx-edit-alt me-1"></i>
+                                    Edit</button>
+                                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
+                                    Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
+<!-- script -->
+{% block script %}
+<!-- script here -->
+<script>
+    const { createApp, computed } = Vue;
+    createApp(
+        {
+            delimiters: ["[{", "}]"],
+            data() {
+                return {
+                    page: "shop",
+                    type: "input-data",
+
+                    name: "",
+                    name_isValid: true,
+
+                    category: "",
+                    category_isValid: true,
+
+                    desc: "",
+                    desc_isValid: true,
+
+                    cost: 0,
+                    cost_isValid: true,
+
+                    price: 0,
+                    price_isValid: true,
+
+                    unit: 0,
+                    unit_isValid: true,
+
+                    discount: 0,
+                    discount_isValid: true,
+
+                    form_isValid: true,
+
+
+                    total_price: computed(() => {
+                        return (this.price - this.cost) * this.unit;
+                    }),
+                    total: computed(() => {
+                        return this.total_price - this.discount;
+                    }),
+                    product_list: new Array,
+
+                    final_cost: computed(() => {
+                        let cost = 0;
+                        for (i of this.product_list) {
+                            cost += i.cost;
+                        }
+                        return cost;
+                    }),
+                    final_price: computed(() => {
+                        let cost = 0;
+                        for (i of this.product_list) {
+                            cost += i.price;
+                        }
+                        return cost;
+                    }),
+                    final_discount: computed(() => {
+                        let cost = 0;
+                        for (i of this.product_list) {
+                            cost += i.discount;
+                        }
+                        return cost;
+                    }),
+                    final_total: computed(() => {
+                        let cost = 0;
+                        for (i of this.product_list) {
+                            cost += i.total_price;
+                        }
+                        return cost;
+                    }),
+                    final_value: computed(() => {
+                        let cost = 0;
+                        for (i of this.product_list) {
+                            cost += i.total;
+                        }
+                        return cost;
+                    }),
+
+
+                };
+            },
+            methods: {
+                addProduct() {
+                    this.form_isValid = true;
+
+                    this.name_isValid = true;
+                    if (this.name == '') {
+                        this.name_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.category_isValid = true;
+                    if (this.category == '') {
+                        this.category_isValid = false;
+                        this.form_isValid = false;
+                    }
+
+                    this.cost_isValid = true;
+                    if (this.cost == 0) {
+                        this.cost_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.price_isValid = true;
+                    if (this.price == 0) {
+                        this.price_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.unit_isValid = true;
+                    if (this.unit == 0) {
+                        this.unit_isValid = false;
+                        this.form_isValid = false;
+                    }
+
+                    if (this.form_isValid) {
+                        const product_object = {
+                            product_name: this.name,
+                            product_category: this.category,
+                            product_desc: this.desc,
+                            cost: this.cost,
+                            price: this.price,
+                            unit: this.unit,
+                            discount: this.discount,
+                            total_price: this.total_price,
+                            total: this.total,
+                        };
+                        this.product_list.push(product_object);
+                        this.name = "";
+                        this.category = "";
+                        this.desc = "";
+                        this.cost = 0;
+                        this.price = 0;
+                        this.unit = 0;
+                        this.discount = 0;
+
+                    }
+
+                },
+                setEdit(index) {
+                    const edit_select = this.product_list[index];
+                    this.name = edit_select.product_name
+                    this.category = edit_select.product_category
+                    this.desc = edit_select.product_desc
+                    this.cost = edit_select.cost
+                    this.price = edit_select.price
+                    this.unit = edit_select.unit
+                    this.discount = edit_select.discount
+                }
+            }
+        }
+    ).mount("#app")
+</script>
+{% endblock script %}

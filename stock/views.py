@@ -448,6 +448,7 @@ def getProductShop(request):
     )
 
 
+# show all user input invoice data (Use)
 @csrf_exempt
 @api_view(["GET",])
 @permission_classes((AllowAny,))
@@ -483,7 +484,7 @@ def getShopInputInvoices(request):
         }
     )
 
-
+# get all shop 
 @csrf_exempt
 @api_view(["GET",])
 @permission_classes((AllowAny,))
