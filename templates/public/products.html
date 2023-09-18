@@ -1,48 +1,43 @@
 {% extends "base.html" %}
 <!-- blocks -->
 {% block content %}
-<!-- content here! -->
+<!-- content here -->
 <div class="card">
-    <h5 class="card-header">Input Invoice</h5>
-    <div class="table-responsive text-nowrap">
+    <h5 class="card-header">Shops</h5>
+    <div class="table-responsive  text-nowrap">
         <table class="table table-hover table-borderless">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Invoice Code</th>
-                    <th>Total Price</th>
-                    <th>Total Cost</th>
-                    <th>Total Discount</th>
-                    <th>Input Amount</th>
-                    <th>Input Date</th>
-                    
-                    <th>Shop</th>
+                    <th>Product Code</th>
+                    <th>Product Name</th>
+                    <th>Product Cost</th>
+                    <th>Product Price</th>
+                    <th>Product Unit</th>
+                    <th>Product Value</th>
+
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in invoice_data" :key="index">
-                    <td>[{index+1}]</td>
-                    <td>
+                <tr v-for="(item, index) in product_list" :key="index">
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{index+1}]</strong></td>
+                    <td class="">
                         <svg class="barcode"
                         jsbarcode-format="auto" 
-                        :jsbarcode-value="item.invoice_no"
+                        :jsbarcode-value="item.product_code"
                         jsbarcode-textmargin="0" 
                         jsbarcode-fontoptions="bold"
                         jsbarcode-width="1"
                         jsbarcode-height="25"
                         jsbarcode-displayvalue="false">
                         </svg>
-                       
                     </td>
-                    <td class="num">[{item.total_price}]</td>
-                    <td class="num">[{item.total_cost}]</td>
-                    <td class="num">[{item.total_discount}]</td>
-                    <td class="num">[{item.data_input.length}]</td>
-                    <td class="time">[{item.input_date}]</td>
-                    
-                    <td>[{item.shop}]</td>
-                    <!-- <td><span class="badge bg-label-primary me-1">Active</span></td> -->
+                    <td>[{item.product_name}]</td>
+                    <td class="num">[{item.product_cost}]</td>
+                    <td class="num">[{item.product_price}]</td>
+                    <td class="num">[{item.product_unit}]</td>
+                    <td class="num">[{item.product_price*item.product_unit}]</td>
                     <td>
                         <div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -61,44 +56,42 @@
         </table>
     </div>
 </div>
-
 {% endblock content %}
-
-<!-- script -->
+<!-- scripts -->
 {% block script %}
 <!-- script here -->
 <script>
-    const { createApp, ref, computed } = Vue;
+    const { createApp } = Vue;
+
     createApp(
         {
             delimiters: ["[{", "}]"],
             data() {
-
                 return {
-                    page:"shop",
-                    type:'input-invoice',
-                    invoice_data: null,
+                    page: "products",
+                    type: null,
+
+                    product_list: null
+
                 };
             },
             mounted() {
                 axios(
                     {
                         method: "get",
-                        url: "{% url 'get-invoice-shop' %}"
+                        url: "{% url 'get-product-all' %}"
                     }
-                ).then((response) => {
-                    if (response.data['status']) {
-                        this.invoice_data = response.data['data'];
-                    }
+                )
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.product_list = response.data['data'];
+                        }
 
-                }).catch((err) => {
+                    }).catch((err) => {
 
-                });
-            },
-            methods:{
-                
+                    });
             }
         }
-    ).mount('#app')
+    ).mount("#app")
 </script>
 {% endblock script %}

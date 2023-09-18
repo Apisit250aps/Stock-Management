@@ -4,10 +4,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 
 urlpatterns = [
-    path('', app.homepage, name='homepage'),
+    # public
+    path('', app.products, name='index'),
+    path('shop', app.shops, name='shop'),
     
     
-    # 4authentications
+    # authentications
     path('login/', app.login, name='login'),
     path('register/', app.register, name='register'),
     

@@ -20,9 +20,7 @@
                 <div class="col-sm-10">
                     <input class="form-control" name="" id="product-category" list="category-list" v-model="category">
                     <datalist id="category-list">
-                        <option value="1">
-                        <option value="2">
-                        <option value="3">
+                        <option v-for="(item, index) in categories" :key="index" :value="item.category">
                     </datalist>
                 </div>
             </div>
@@ -191,6 +189,8 @@
                     form_isValid: true,
                     isValid: true,
 
+                    categories:null,
+
 
 
 
@@ -240,6 +240,21 @@
 
 
                 };
+            },
+            mounted(){
+                axios(
+                    {
+                        method: "get",
+                        url: "{% url 'get-product-categories' %}"
+                    }
+                ).then((response) => {
+                    if (response.data['status']) {
+                        this.categories = response.data['data'];
+                    }
+
+                }).catch((err) => {
+
+                });
             },
             methods: {
                 addProduct() {

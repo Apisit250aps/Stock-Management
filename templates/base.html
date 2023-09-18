@@ -61,17 +61,28 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{% static 'assets/js/config.js' %}"></script>
-
+    
+    
+    <style>
+      td.num{
+        text-align: end;
+      }
+      
+    </style>
 
 
     <!-- library -->
     <!-- unpkg -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    
 
   </head>
 
   <body>
+    
+    
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar" id="app">
       <div class="layout-container">
@@ -147,14 +158,24 @@
 
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
-            <li class="menu-item" :class="{'active':page=='dashboard'}">
-              <a href="/" class="menu-link">
+            <li class="menu-item" :class="{'active':page=='products'}">
+              <a href="{% url 'index' %}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
+                <div data-i18n="Analytics">Products</div>
+              </a>
+            </li>
+            <li class="menu-item" :class="{'active':page=='shops'}">
+              <a href="{% url 'shop' %}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Shops</div>
               </a>
             </li>
 
             <!-- Layouts -->
+      
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Pages</span>
+            </li>
             <li class="menu-item open" :class="{'active':page=='shop'}">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -178,10 +199,6 @@
                   </a>
                 </li>
               </ul>
-            </li>
-
-            <li class="menu-header small text-uppercase">
-              <span class="menu-header-text">Pages</span>
             </li>
             <li class="menu-item">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -632,9 +649,8 @@
         >Upgrade to Pro</a
       >
     </div> -->
-
     {% block script %}{% endblock script %}
-
+    
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{% static 'assets/vendor/libs/jquery/jquery.js' %}"></script>
@@ -644,15 +660,16 @@
 
     <script src="{% static 'assets/vendor/js/menu.js' %}"></script>
     <!-- endbuild -->
-
+    
     <!-- Vendors JS -->
-
+    
     <!-- Main JS -->
     <script src="{% static 'assets/js/main.js' %}"></script>
-
+    
     <!-- Page JS -->
-
+    
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="{% static 'index.js' %}"></script>
   </body>
 </html>

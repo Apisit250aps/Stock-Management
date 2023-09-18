@@ -31,10 +31,10 @@
                     <td>[{item.product.product_code}]</td>
                     <td>[{item.product.product_name}]</td>
                     <td>[{item.product.product_category}]</td>
-                    <td>[{priceFormat(item.product.product_cost)}]</td>
-                    <td>[{priceFormat(item.product.product_price)}]</td>
-                    <td>[{item.product.product_unit}]</td>
-                    <td>[{ priceFormat(item.product.product_unit * item.product.product_price) }]</td>
+                    <td class="num">[{priceFormat(item.product.product_cost)}]</td>
+                    <td class="num">[{priceFormat(item.product.product_price)}]</td>
+                    <td class="num">[{item.product.product_unit}]</td>
+                    <td class="num">[{ priceFormat(item.product.product_unit * item.product.product_price) }]</td>
                     <td>[{timeFormat(item.product.add_date)}]</td>
                     <!-- <td><span class="badge bg-label-primary me-1">Active</span></td> -->
                     <td>

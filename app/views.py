@@ -14,6 +14,14 @@ def homepage(request):
 
     return render(request, 'shop/base.html')
 
+# public
+def products(request):
+    
+    return render(request, 'public/products.html')
+
+def shops(request):
+    
+    return render(request, 'public/shops.html')
 
 # authentications
 def login(request):

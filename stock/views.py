@@ -397,7 +397,10 @@ def getProductCategory(request):
         models.ProductCategory.objects.all(), many=True).data
 
     return Response(
-        data=data
+        {
+            "status":True,
+            "data":data
+        }
     )
 
 
@@ -514,7 +517,7 @@ def getAllShop(request):
     for item in shop:
         item['user'] = User.objects.get(id=item['user']).username
         item['shop_product_type'] = models.ProductTypeData.objects.get(
-            type_id=item["shop_product_type"]).type_name
+            id=item["shop_product_type"]).type_name
         shop_all.append(item)
 
     return Response(
