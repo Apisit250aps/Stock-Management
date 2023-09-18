@@ -10,6 +10,8 @@ urlpatterns = [
     path('get/product-type', api.getProductType, name='get-product-type'),
     path('get/product-categories', api.getProductCategory, name='get-product-categories'),
     path('get/invoice/shop', api.getShopInputInvoices, name='get-invoice-shop'),
+    # path('get/shop/data-input', api.shopDataInput, name='get-data-shop'),
+    
     
     
     path('get/user/id', api.get_user, name='get-user-id'),

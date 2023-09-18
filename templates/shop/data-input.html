@@ -87,7 +87,7 @@
         <table class="table table-borderless table-hover">
             <caption class="ms-4 px-3">
                 <div class="d-flex flex-row  justify-content-end align-items-center">
-                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" @click="onSubmit($event)" class="btn btn-success">Save</button>
                 </div>
             </caption>
             <thead>
@@ -110,7 +110,7 @@
                     <th></th>
                     <th></th>
                     <th></th>
-                    <th>[{final_unit}]</th>
+                    <th></th>
                     <th>[{final_cost}]</th>
                     <th>[{final_price}]</th>
                     <th>[{final_discount}]</th>
@@ -138,7 +138,8 @@
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <button class="dropdown-item" @click="setEdit(index)" ><i class="bx bx-edit-alt me-1"></i>
+                                <button class="dropdown-item" @click="setEdit(index)"><i
+                                        class="bx bx-edit-alt me-1"></i>
                                     Edit</button>
                                 <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
                                     Delete</a>
@@ -164,6 +165,8 @@
                     page: "shop",
                     type: "input-data",
 
+                    remark: "",
+
                     name: "",
                     name_isValid: true,
 
@@ -186,6 +189,9 @@
                     discount_isValid: true,
 
                     form_isValid: true,
+                    isValid: true,
+
+
 
 
                     total_price: computed(() => {
@@ -292,16 +298,56 @@
                 },
                 setEdit(index) {
                     const edit_select = this.product_list[index];
-                    this.name = edit_select.product_name
-                    this.category = edit_select.product_category
-                    this.desc = edit_select.product_desc
-                    this.cost = edit_select.cost
-                    this.price = edit_select.price
-                    this.unit = edit_select.unit
-                    this.discount = edit_select.discount
+                    this.name = edit_select.product_name;
+                    this.category = edit_select.product_category;
+                    this.desc = edit_select.product_desc;
+                    this.cost = edit_select.cost;
+                    this.price = edit_select.price;
+                    this.unit = edit_select.unit;
+                    this.discount = edit_select.discount;
+                },
+                onSubmit(e) {
+                    e.preventDefault();
+
+                    this.isValid = true;
+
+                    if (this.product_list.length == 0) {
+                        this.isValid = false;
+
+                    }
+
+                    if (this.isValid) {
+                        const products = JSON.stringify(Object.assign({}, this.product_list));
+                        const form_data = new FormData;
+
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append('products', products);
+                        form_data.append('remark', this.remark);
+                        form_data.append('total_cost', this.final_cost);
+                        form_data.append('total_price', this.final_price);
+                        form_data.append('total_discount', this.final_discount);
+                        form_data.append('total', this.final_value);
+
+                        axios(
+                            {
+                                method:"post",
+                                url:"{% url 'create-InputData-api' %}",
+                                data:form_data
+
+                            }
+                        )
+
+                    }
+
+
+
+
+
                 }
             }
         }
     ).mount("#app")
 </script>
 {% endblock script %}
+
+

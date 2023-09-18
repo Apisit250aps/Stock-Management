@@ -14,10 +14,15 @@ def homepage(request):
 
     return render(request, 'shop/base.html')
 
+
+# authentications
 def login(request):
     
     return render(request, 'authentications/login.html')
 
+def register(request):
+    
+    return render(request, 'authentications/register.html')
 
 
 

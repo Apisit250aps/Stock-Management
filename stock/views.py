@@ -193,19 +193,19 @@ def getTambon(request):
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def createInputData(request):
-    # user_id = request.session['_auth_user_id']
-    obj_string = request.data['products']
+
     status = True
-    remark = request.data['remark']
     user = User.objects.get(username=request.user.username)
-    object_product = json.loads(obj_string)
     shop = models.ShopData.objects.get(user=user)
 
-    total_cost = request.data['total_cost']
-    total_price = request.data['total_price']
-    total_discount = request.data['total_discount']
-    totals = request.data['total']
-    print(object_product)
+    obj_string = request.data['products'] # product list 
+    remark = request.data['remark'] # remark
+    total_cost = request.data['total_cost'] # total cost 
+    total_price = request.data['total_price'] # total price
+    total_discount = request.data['total_discount'] # total discount
+    total = request.data['total'] #  total values 
+    
+    object_product = json.loads(obj_string)
 
     try:
 
@@ -213,7 +213,7 @@ def createInputData(request):
             invoice_no=invoiceCode(),
             shop=shop,
             total_cost=total_cost,
-            total_price=totals,
+            total_price=total,
             total_discount=total_discount,
             remark=remark
         )
@@ -221,11 +221,11 @@ def createInputData(request):
             for products in object_product.values():
                 product_code = productCode()
                 product_name = products['product_name']
-                product_desc = products['product_detail']
+                product_desc = products['product_desc']
                 product_price = products['price']
                 product_unit = products['unit']
                 product_cost = products['cost']
-                product_category = ProductCategory(products['product_type'])
+                product_category = ProductCategory(products['product_category'])
 
                 product = models.ProductData.objects.create(
                     product_code=product_code,
@@ -397,9 +397,7 @@ def getProductCategory(request):
         models.ProductCategory.objects.all(), many=True).data
 
     return Response(
-
         data=data
-
     )
 
 
@@ -447,6 +445,25 @@ def getProductShop(request):
         }
     )
 
+
+# show shop data input
+# @csrf_exempt
+# @api_view(["GET",])
+# @permission_classes((AllowAny,))
+# def shopDataInput(request):
+#     user = User.objects.get(username=request.user.username)
+#     shop = models.ShopData.objects.get(user=user)
+#     invoice = models.InputInvoice.objects.filter(shop=shop)
+#     data_input = models.InputData.objects.filter(invoice=invoice[1])
+#     data = serializers.ShopInputData(data_input, many=True).data
+#     print(data_input)
+#     return Response(
+#         {
+#             "status":True,
+#             "data":data
+#         }
+#     )
+    
 
 # show all user input invoice data (Use)
 @csrf_exempt

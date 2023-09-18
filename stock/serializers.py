@@ -36,3 +36,14 @@ class ProductCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProductCategory
         fields = '__all__'
+        
+
+# class ShopInputData(serializers.ModelSerializer):
+    
+#     products = ProductDataSerializer(
+#         many=True,
+#         read_only=True
+#     )
+#     class Meta:
+#         model = models.InputData
+#         fields = '__all__'

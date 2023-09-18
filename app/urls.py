@@ -5,7 +5,11 @@ from django.shortcuts import render, redirect
 
 urlpatterns = [
     path('', app.homepage, name='homepage'),
+    
+    
+    # 4authentications
     path('login/', app.login, name='login'),
+    path('register/', app.register, name='register'),
     
     
     # shop
