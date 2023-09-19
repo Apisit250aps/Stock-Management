@@ -245,6 +245,8 @@ def createInputData(request):
                     unit_cost=product_cost,
                     discount=products['discount']
                 )
+                models.ProductShop.objects.create(shop=shop, product=product)
+                
         except Exception as err:
             print(err)
 
@@ -393,8 +395,14 @@ def getProductType(request):
 @api_view(["GET", ])
 @permission_classes((AllowAny,))
 def getProductCategory(request):
+    user = User.objects.get(username=request.user.username)
+    shop = models.ShopData.objects.get(user=user)
+    product_type = models.ProductTypeData.objects.get(id=shop.shop_product_type.id)
+    
+    
+    
     data = serializers.ProductCategorySerializer(
-        models.ProductCategory.objects.all(), many=True).data
+        models.ProductCategory.objects.filter(product_type=product_type), many=True).data
 
     return Response(
         {

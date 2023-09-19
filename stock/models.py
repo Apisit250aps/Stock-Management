@@ -15,9 +15,9 @@ class ProductTypeData(models.Model):
     def __str__(self):
         
         return f"{self.type_name}"
-    
 
 class ProductCategory(models.Model):
+    product_type = models.ForeignKey(ProductTypeData, on_delete=models.CASCADE)
     category = models.CharField(max_length=128)
     
     def __str__(self):
@@ -171,7 +171,13 @@ class OutputData(models.Model):
     def __str__(self):
         
         return self.invoice_no
-      
+
+class ProductShop(models.Model):
+    shop = models.ForeignKey(ShopData, on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductData, on_delete=models.CASCADE, unique=True)
+    
+    def __str__(self) -> str:
+        return self.product.product_code
       
 class DBCounter(models.Model):
     
