@@ -36,19 +36,23 @@
                 <div class="col-sm-10">
                     <div class=" row m-auto row-cols-1 row-cols-lg-4">
                         <div class="col my-1 p-0 my-lg-0">
-                            <input placeholder="cost" class=" form-control form" type="number" name="" id=""
+                            <label class="form-label-sm" for="cost">Cost</label>
+                            <input placeholder="cost"  class=" form-control form" type="number" name="" id="cost"
                                 v-model="cost">
                         </div>
                         <div class="col my-1 p-0 my-lg-0">
-                            <input placeholder="price" class=" form-control form" type="number" name="" id=""
+                            <label class="form-label-sm" for="price">Price</label>
+                            <input placeholder="price" class=" form-control form" type="number" name="" id="price"
                                 v-model="price">
                         </div>
                         <div class="col my-1 p-0 my-lg-0">
-                            <input placeholder="unit" class=" form-control form" type="number" name="" id=""
+                            <label class="form-label-sm" for="unit">Unit</label>
+                            <input placeholder="unit" class=" form-control form" type="number" name="" id="unit"
                                 v-model="unit">
                         </div>
                         <div class="col my-1 p-0 my-lg-0">
-                            <input placeholder="discount" class=" form-control form" type="number" name="" id=""
+                            <label class="form-label-sm" for="discount">Discount</label>
+                            <input placeholder="discount" class=" form-control form" type="number" name="" id="discount"
                                 v-model="discount">
                         </div>
                     </div>
@@ -59,11 +63,13 @@
                 <div class="col-sm-10">
                     <div class=" row m-auto row-cols-1 row-cols-lg-2">
                         <div class="col my-1 p-0 my-lg-0">
+                            <label class="form-label-sm" for="total-price">Total Price</label>
                             <input disabled placeholder="Total Price" class=" form-control form" type="number" name=""
-                                id="" v-model="total_price">
+                                id="total-price" v-model="total_price">
                         </div>
                         <div class="col my-1 p-0 my-lg-0">
-                            <input disabled placeholder="Total" class=" form-control form" type="number" name="" id=""
+                            <label class="form-label-sm" for="total">Total</label>
+                            <input disabled placeholder="Total" class=" form-control form" type="number" name="" id="total"
                                 v-model="total">
                         </div>
                     </div>
@@ -72,7 +78,10 @@
 
             <div class="row justify-content-end">
                 <div class="col-sm-10">
-                    <button type="button" @click="addProduct()" class="btn btn-primary">Send</button>
+                    <button type="button" v-show="!on_edit" @click="addProduct()" class="btn btn-primary">Add</button>
+                </div>
+                <div class="col-sm-10" v-show="on_edit">
+                    <button type="button" @click="onEdit()" class="btn btn-primary">Edit</button>
                 </div>
             </div>
         </form>
@@ -139,7 +148,7 @@
                                 <button class="dropdown-item" @click="setEdit(index)"><i
                                         class="bx bx-edit-alt me-1"></i>
                                     Edit</button>
-                                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
+                                <a class="dropdown-item" @click="onDelete(index)" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
                                     Delete</a>
                             </div>
                         </div>
@@ -189,7 +198,10 @@
                     form_isValid: true,
                     isValid: true,
 
-                    categories:null,
+                    on_edit: false,
+                    indexSelected: null,
+
+                    categories: null,
 
 
 
@@ -241,7 +253,7 @@
 
                 };
             },
-            mounted(){
+            mounted() {
                 axios(
                     {
                         method: "get",
@@ -312,6 +324,7 @@
 
                 },
                 setEdit(index) {
+
                     const edit_select = this.product_list[index];
                     this.name = edit_select.product_name;
                     this.category = edit_select.product_category;
@@ -320,6 +333,69 @@
                     this.price = edit_select.price;
                     this.unit = edit_select.unit;
                     this.discount = edit_select.discount;
+
+                    this.on_edit = true;
+                    this.indexSelected = index;
+
+                },
+                onEdit() {
+                    this.form_isValid = true;
+
+                    this.name_isValid = true;
+                    if (this.name == '') {
+                        this.name_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.category_isValid = true;
+                    if (this.category == '') {
+                        this.category_isValid = false;
+                        this.form_isValid = false;
+                    }
+
+                    this.cost_isValid = true;
+                    if (this.cost == 0) {
+                        this.cost_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.price_isValid = true;
+                    if (this.price == 0) {
+                        this.price_isValid = false;
+                        this.form_isValid = false;
+                    }
+                    this.unit_isValid = true;
+                    if (this.unit == 0) {
+                        this.unit_isValid = false;
+                        this.form_isValid = false;
+                    }
+
+                    if (this.form_isValid) {
+                        this.product_list[this.indexSelected];
+                        this.product_list[this.indexSelected].product_name = this.name;
+                        this.product_list[this.indexSelected].product_category = this.category;
+                        this.product_list[this.indexSelected].product_desc = this.desc;
+                        this.product_list[this.indexSelected].cost = this.cost;
+                        this.product_list[this.indexSelected].price = this.price;
+                        this.product_list[this.indexSelected].unit = this.unit;
+                        this.product_list[this.indexSelected].discount = this.discount;
+                        this.product_list[this.indexSelected].total_price = this.total_price;
+                        this.product_list[this.indexSelected].total = this.total;
+
+                        this.name = "";
+                        this.category = "";
+                        this.desc = "";
+                        this.cost = 0;
+                        this.price = 0;
+                        this.unit = 0;
+                        this.discount = 0;
+
+                        this.indexSelected = null;
+                        this .on_edit = false
+                    }
+                },
+
+                onDelete(index){
+                    this.product_list.splice(index, 1)
+
                 },
                 onSubmit(e) {
                     e.preventDefault();
@@ -345,12 +421,12 @@
 
                         axios(
                             {
-                                method:"post",
-                                url:"{% url 'create-InputData-api' %}",
-                                data:form_data
+                                method: "post",
+                                url: "{% url 'create-InputData-api' %}",
+                                data: form_data
 
                             }
-                        )
+                        );
 
                     }
 
@@ -364,5 +440,3 @@
     ).mount("#app")
 </script>
 {% endblock script %}
-
-
