@@ -12,15 +12,11 @@ for (let i = 0, len = x.length; i < len; i++) {
 
 let time = document.querySelectorAll("td.time");
 for (let i = 0, len = time.length; i < len; i++) {
-    let num = new Date(time[i].innerHTML)
-        .toLocaleString('en-GB');
-    time[i].innerHTML = num;
-    time[i].classList.add("currSign");
+    let date = new Date(time[i].innerHTML).toLocaleDateString('en-GB')
+    time[i].innerHTML = date;
+    
 }
 
-JsBarcode(".barcode", {
-    format:"EAN13"
-}).init();
 
 // JsBarcode(".barcode", {
 //     width: 1

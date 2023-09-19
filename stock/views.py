@@ -198,13 +198,13 @@ def createInputData(request):
     user = User.objects.get(username=request.user.username)
     shop = models.ShopData.objects.get(user=user)
 
-    obj_string = request.data['products'] # product list 
-    remark = request.data['remark'] # remark
-    total_cost = request.data['total_cost'] # total cost 
-    total_price = request.data['total_price'] # total price
-    total_discount = request.data['total_discount'] # total discount
-    total = request.data['total'] #  total values 
-    
+    obj_string = request.data['products']  # product list
+    remark = request.data['remark']  # remark
+    total_cost = request.data['total_cost']  # total cost
+    total_price = request.data['total_price']  # total price
+    total_discount = request.data['total_discount']  # total discount
+    total = request.data['total']  # total values
+
     object_product = json.loads(obj_string)
 
     try:
@@ -225,7 +225,8 @@ def createInputData(request):
                 product_price = products['price']
                 product_unit = products['unit']
                 product_cost = products['cost']
-                product_category = ProductCategory(products['product_category'])
+                product_category = ProductCategory(
+                    products['product_category'])
 
                 product = models.ProductData.objects.create(
                     product_code=product_code,
@@ -246,7 +247,7 @@ def createInputData(request):
                     discount=products['discount']
                 )
                 models.ProductShop.objects.create(shop=shop, product=product)
-                
+
         except Exception as err:
             print(err)
 
@@ -288,8 +289,7 @@ def createShop(request):
 
     try:
         # create user on main user >>>
-        user = User.objects.create_user(
-            username=username, password=password, email=email, first_name=fname, last_name=lname)
+
         if user:
             # check shop product type >>>
             if models.ProductTypeData.objects.filter(type_name=shop_product_type).count() == 0:
@@ -330,6 +330,35 @@ def createShop(request):
             "status": status,
             "message": "success"
         }
+    )
+
+
+def register_api(request):
+    data = request.data
+    status = True
+    message = ""
+    username = data['username']
+    password = data['password']
+    email = data['email']
+
+    if User.objects.filter(username=username).count() != 0:
+        status = False
+        message = "มีชื่อผู้ใช้นี้แล้ว"
+    else:
+
+        user = User.objects.create_user(
+            username=username, password=password, email=email)
+
+        if user:
+            status = True
+            message = "Success!"
+
+    return Response(
+        {
+            "status": status,
+            "message": message
+        }
+
     )
 
 
@@ -397,17 +426,16 @@ def getProductType(request):
 def getProductCategory(request):
     user = User.objects.get(username=request.user.username)
     shop = models.ShopData.objects.get(user=user)
-    product_type = models.ProductTypeData.objects.get(id=shop.shop_product_type.id)
-    
-    
-    
+    product_type = models.ProductTypeData.objects.get(
+        id=shop.shop_product_type.id)
+
     data = serializers.ProductCategorySerializer(
         models.ProductCategory.objects.filter(product_type=product_type), many=True).data
 
     return Response(
         {
-            "status":True,
-            "data":data
+            "status": True,
+            "data": data
         }
     )
 
@@ -415,46 +443,74 @@ def getProductCategory(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def getAllProduct(request):
-    product_data = models.ProductData.objects.all()
-    products = serializers.ProductDataSerializer(product_data, many=True).data
+def getAllProductData(request):
+    data = []
+    for item in serializers.ProductDataSerializer(models.ProductData.objects.all(), many=True).data:
+        item = dict(item)
+        item['product_category'] = models.ProductCategory.objects.get(
+            id=int(item['product_category'])).category
+        data.append(item)
 
     return Response(
         {
             "status": True,
-            "data": products
+            "data": data
         }
     )
-
 
 @csrf_exempt
-@api_view(["GET",])
+@api_view(["GET"])
 @permission_classes((AllowAny,))
 def getProductShop(request):
-    username = None
-    if request.user.is_authenticated:
-        username = request.user.username
-
-    print(username)
-    user = models.User.objects.get(username=username)
-    print(user)
+    user = User.objects.get(username=request.user.username)
     shop = models.ShopData.objects.get(user=user)
-    # invoice = models.InputInvoice.objects.get(shop=shop)
-    invoice_data = models.InputInvoice.objects.filter(shop=shop)
-    invoiceSerializerData = serializers.InputInvoiceSerializer(
-        invoice_data, many=True).data
-    # inputData_data = models.InputData.objects.filter(invoice=invoice)
-    # inputDataSerializerData = serializers.InputDataSerializer(inputData_data, many=True).data
+    data = []
+    for product in models.ProductShop.objects.filter(shop=shop):
+
+        product_info = serializers.ProductDataSerializer(
+            models.ProductData.objects.get(id=product.id)).data
+        
+        product_info['product_category'] = models.ProductCategory.objects.get(
+            id=int(product_info['product_category'])).category
+        
+        data.append(product_info)
+    
     return Response(
         {
-            "status": 200,
-            "data": {
-                "invoice": invoiceSerializerData,
-                # "input_data":inputDataSerializerData
-
-            }
+            "status": True,
+            "data":data
         }
     )
+
+
+# @csrf_exempt
+# @api_view(["GET",])
+# @permission_classes((AllowAny,))
+# def getProductShop(request):
+#     username = None
+#     if request.user.is_authenticated:
+#         username = request.user.username
+
+#     print(username)
+#     user = models.User.objects.get(username=username)
+#     print(user)
+#     shop = models.ShopData.objects.get(user=user)
+#     # invoice = models.InputInvoice.objects.get(shop=shop)
+#     invoice_data = models.InputInvoice.objects.filter(shop=shop)
+#     invoiceSerializerData = serializers.InputInvoiceSerializer(
+#         invoice_data, many=True).data
+#     # inputData_data = models.InputData.objects.filter(invoice=invoice)
+#     # inputDataSerializerData = serializers.InputDataSerializer(inputData_data, many=True).data
+#     return Response(
+#         {
+#             "status": 200,
+#             "data": {
+#                 "invoice": invoiceSerializerData,
+#                 # "input_data":inputDataSerializerData
+
+#             }
+#         }
+#     )
 
 
 # show shop data input
@@ -474,7 +530,7 @@ def getProductShop(request):
 #             "data":data
 #         }
 #     )
-    
+
 
 # show all user input invoice data (Use)
 @csrf_exempt
@@ -507,12 +563,14 @@ def getShopInputInvoices(request):
 
     return Response(
         {
-            "status":True,
-            "data":invoices
+            "status": True,
+            "data": invoices
         }
     )
 
-# get all shop 
+# get all shop
+
+
 @csrf_exempt
 @api_view(["GET",])
 @permission_classes((AllowAny,))

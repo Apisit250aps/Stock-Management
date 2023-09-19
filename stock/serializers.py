@@ -3,6 +3,11 @@ from rest_framework import serializers
 from . import models
 
 class ProductDataSerializer(serializers.ModelSerializer):
+    
+    
+    def create(self, validated_data):
+        
+        return super().create(validated_data)
     class Meta:
         model = models.ProductData
         fields = '__all__'
@@ -37,13 +42,7 @@ class ProductCategorySerializer(serializers.ModelSerializer):
         model = models.ProductCategory
         fields = '__all__'
         
-
-# class ShopInputData(serializers.ModelSerializer):
-    
-#     products = ProductDataSerializer(
-#         many=True,
-#         read_only=True
-#     )
-#     class Meta:
-#         model = models.InputData
-#         fields = '__all__'
+class ProductShopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductShop
+        fields = '__all__'

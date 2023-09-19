@@ -2,51 +2,36 @@
 <!-- block -->
 {% block content %}
 <!-- content here! -->
+<!-- content here -->
 <div class="card">
-
-    <h5 class="card-header">All Products</h5>
-    <div class="table-responsive text-nowrap">
-
-        <table class="table table-borderless  table-hover">
-            <thead class="">
+    <h5 class="card-header">Shops</h5>
+    <div class="table-responsive  text-nowrap">
+        <table class="table table-hover table-borderless">
+            <thead>
                 <tr>
                     <th>#</th>
-                    <th>Invoice ID</th>
                     <th>Product Code</th>
                     <th>Product Name</th>
-                    <th>Product Category</th>
                     <th>Product Cost</th>
                     <th>Product Price</th>
                     <th>Product Unit</th>
-                    <th>Total value</th>
-                    <th>Input Date</th>
+                    <th>Product Value</th>
+                    <th>Add Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="">
-                <tr v-for="(item, index) in data_inputs" :key="index">
-                    <td>[{index + 1}]</td>
-                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{ item.invoice_no }]</strong>
+            <tbody>
+                <tr v-for="(item, index) in product_list" :key="index">
+                    <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{index+1}]</strong></td>
+                    <td class="">
+                        [{item.product_code}]
                     </td>
-                    <td>
-                        <svg class="barcode"
-                        jsbarcode-format="auto" 
-                        :jsbarcode-value="item.product_code"
-                        jsbarcode-textmargin="0" 
-                        jsbarcode-fontoptions="bold"
-                        jsbarcode-width="1"
-                        jsbarcode-height="25"
-                        jsbarcode-displayvalue="false">
-                        </svg>
-                    </td>
-                    <td>[{item.product.product_name}]</td>
-                    <td>[{item.product.product_category}]</td>
-                    <td class="num">[{priceFormat(item.product.product_cost)}]</td>
-                    <td class="num">[{priceFormat(item.product.product_price)}]</td>
-                    <td class="num">[{item.product.product_unit}]</td>
-                    <td class="num">[{ item.product.product_unit * item.product.product_price }]</td>
-                    <td>[{timeFormat(item.product.add_date)}]</td>
-                    <!-- <td><span class="badge bg-label-primary me-1">Active</span></td> -->
+                    <td>[{item.product_name}]</td>
+                    <td class="num">[{item.product_cost}]</td>
+                    <td class="num">[{item.product_price}]</td>
+                    <td class="num">[{item.product_unit}]</td>
+                    <td class="num">[{item.product_price*item.product_unit}]</td>
+                    <td class="time">[{ item.add_date }]</td>
                     <td>
                         <div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -60,7 +45,6 @@
                             </div>
                         </div>
                     </td>
-
                 </tr>
             </tbody>
         </table>
@@ -71,50 +55,37 @@
 {% block script %}
 <!-- script here -->
 <script>
-    const { createApp, ref, computed } = Vue;
+    const { createApp } = Vue;
+
     createApp(
         {
             delimiters: ["[{", "}]"],
             data() {
-
                 return {
-                    page:"shop",
-                    type:"all-product",
+                    page: "shop",
+                    type: "all-product",
 
-                    invoice_data: new Array,
-                    data_inputs: new Array,
+                    product_list: null
+
                 };
             },
             mounted() {
                 axios(
                     {
                         method: "get",
-                        url: "{% url 'get-invoice-shop' %}"
+                        url: "{% url 'get-product-shop' %}"
                     }
-                ).then((response) => {
-                    if (response.data['status']) {
-                        this.invoice_data = response.data['data'];
-
-                        for (item of this.invoice_data) {
-                            for (i of item.data_input) {
-                                this.data_inputs.push(i)
-                            }
+                )
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.product_list = response.data['data'];
                         }
-                    }
 
-                });
-            },
-            methods:{
-                timeFormat(datetime){
-                    const time=new Date(datetime).toLocaleTimeString("en-US", { hour12: false })
-                    const date=new Date(datetime).toLocaleDateString("en-GB")
-                    return `${date} - ${time}`
-                },
-                priceFormat(num){
-                    return num.toLocaleString('en-US');
-                }
+                    }).catch((err) => {
+
+                    });
             }
         }
-    ).mount('#app')
+    ).mount("#app")
 </script>
 {% endblock script %}

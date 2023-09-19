@@ -15,7 +15,6 @@
                     <th>Product Price</th>
                     <th>Product Unit</th>
                     <th>Product Value</th>
-
                     <th>Action</th>
                 </tr>
             </thead>
@@ -23,15 +22,7 @@
                 <tr v-for="(item, index) in product_list" :key="index">
                     <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>[{index+1}]</strong></td>
                     <td class="">
-                        <svg class="barcode"
-                        jsbarcode-format="auto" 
-                        :jsbarcode-value="item.product_code"
-                        jsbarcode-textmargin="0" 
-                        jsbarcode-fontoptions="bold"
-                        jsbarcode-width="1"
-                        jsbarcode-height="25"
-                        jsbarcode-displayvalue="false">
-                        </svg>
+                        [{item.product_code}]
                     </td>
                     <td>[{item.product_name}]</td>
                     <td class="num">[{item.product_cost}]</td>
