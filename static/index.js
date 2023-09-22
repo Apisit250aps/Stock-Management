@@ -12,9 +12,8 @@ for (let i = 0, len = x.length; i < len; i++) {
 
 let time = document.querySelectorAll("td.time");
 for (let i = 0, len = time.length; i < len; i++) {
-    let date = new Date(time[i].innerHTML).toLocaleDateString('en-GB')
+    let date = Date(time[i].innerHTML).toLocaleDateString('en-GB')
     time[i].innerHTML = date;
-    
 }
 
 

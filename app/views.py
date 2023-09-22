@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -26,13 +26,17 @@ def shops(request):
 
     return render(request, 'public/shops.html')
 
+
+
 # authentications
-
-
 def login(request):
 
     return render(request, 'authentications/login.html')
 
+def LOGOUT(request):
+    
+    logout(request)
+    return redirect("index")
 
 def register(request):
 

@@ -13,6 +13,7 @@ urlpatterns = [
     path('login/', app.login, name='login'),
     path('register/', app.register, name='register'),
     path('create-shop/', app.createShop, name='create-shop-page'),
+    path('logout', app.LOGOUT, name='logout'),
     
     # shop
     path('shop/product-all', app.shopProducts, name='shop-products-page'),

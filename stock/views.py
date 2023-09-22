@@ -22,11 +22,12 @@ from . import serializers
 # Create your views here.
 
 
-def ProductCategory(category):
-    if models.ProductCategory.objects.filter(category=category).count() != 0:
-        category = models.ProductCategory.objects.get(category=category)
-    else:
-        category = models.ProductCategory.objects.create(category=category)
+def ProductCategory(category, types:int):
+    type = models.ProductTypeData.objects.get(id=types)
+    try :
+        category = models.ProductCategory.objects.filter(product_type=type).get(category=category)
+    except:
+        category = models.ProductCategory.objects.create(product_type=type, category=category)
 
     return category
 
@@ -197,6 +198,7 @@ def createInputData(request):
     status = True
     user = User.objects.get(username=request.user.username)
     shop = models.ShopData.objects.get(user=user)
+    shop_product_types = shop.shop_product_type.id
 
     obj_string = request.data['products']  # product list
     remark = request.data['remark']  # remark
@@ -226,7 +228,9 @@ def createInputData(request):
                 product_unit = products['unit']
                 product_cost = products['cost']
                 product_category = ProductCategory(
-                    products['product_category'])
+                    products['product_category'],
+                    shop_product_types
+                    )
 
                 product = models.ProductData.objects.create(
                     product_code=product_code,
@@ -247,12 +251,15 @@ def createInputData(request):
                     discount=products['discount']
                 )
                 models.ProductShop.objects.create(shop=shop, product=product)
+                status = True
 
         except Exception as err:
             print(err)
+            status = False
 
     except:
         models.InputInvoice.objects.filter(id=invoice.id).delete()
+        status = False
 
     return Response({
         "status": status
