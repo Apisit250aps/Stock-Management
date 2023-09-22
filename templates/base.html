@@ -491,20 +491,22 @@
                 <i class="bx bx-menu bx-sm"></i>
               </a>
             </div>
-
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item d-flex align-items-center">
-                  <i class="bx bx-search fs-4 lh-0"></i>
-                  <input
-                    type="text"
-                    class="form-control border-0 shadow-none"
-                    placeholder="Search..."
-                    aria-label="Search..."
-                  />
-                </div>
-              </div>
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <li class="nav-item lh-1 me-3">
+                  <div class="badge-notifications badge rounded-3 bg-primary">
+                    {% if user.is_authenticated %}
+                    <b class="fs-3">{{user}}</b>
+                    {% else %}
+                    <b class="fs-3">Guess</b>
+                    {% endif %}
+                    
+                  </div>
+                </li>
+              </ul>
+              
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -667,6 +669,6 @@
     
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{% static 'index.js' %}"></script>
+    <script async defer src="{% static 'index.js' %}"></script>
   </body>
 </html>
