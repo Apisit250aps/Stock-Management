@@ -265,27 +265,27 @@ def createInputData(request):
 def createShop(request):
     data = request.data
     status = True
+    
+    user = User.objects.get(username=request.user.username)
+    shop_name = data['shop']
+    shop_product_type = data['product_type']
     fname = data['fname']
     lname = data['lname']
-    username = data['username']
-    password = data['password']
-    email = data['email']
-    shop_name = data['shop_name']
-    shop_product_type = data['product_type']
-    shop_contact = f"{fname} {lname}"
-    shop_province = data['province']
     shop_district = data['district']
+    shop_province = data['province']
     shop_subdistrict = data['sub_district']
-    shop_post_id = data['post_id']
-    shop_address = data['detail_address']
+    shop_post_id = data['zip']
+    shop_address = data['detail']
+    shop_area = models.AreaData.objects.get(id=int(data['area']))
+    email = data['email']
     shop_tel = data['tel']
     shop_fax = data['fax']
     shop_email = email
     shop_remark = data['remark']
-    shop_area = models.AreaData.objects.get(id=data['area'])
-
-    if User.objects.filter(username=username).count() != 0:
-        return Response({"status": False, "message": 'มีชื่อผู้ใช้นี้แล้ว'})
+    shop_contact = f"{fname} {lname}"
+    
+    
+    
 
     try:
         # create user on main user >>>
@@ -320,26 +320,30 @@ def createShop(request):
             )
             if shop_create:
                 status = True
+                message = "Success"
 
     except Exception as err:
         status = False
-        User.objects.get(id=user.id).delete()
+        message = "Failed"
+        models.ShopData.objects.get(id=shop_create.id).delete()
 
     return Response(
         {
             "status": status,
-            "message": "success"
+            "message": message
         }
     )
 
-
+@csrf_exempt
+@api_view(["POST",])
+@permission_classes((AllowAny,))
 def register_api(request):
-    data = request.data
+
     status = True
     message = ""
-    username = data['username']
-    password = data['password']
-    email = data['email']
+    username = request.data['username']
+    password = request.data['password']
+    email = request.data['email']
 
     if User.objects.filter(username=username).count() != 0:
         status = False
@@ -350,9 +354,20 @@ def register_api(request):
             username=username, password=password, email=email)
 
         if user:
-            status = True
-            message = "Success!"
-
+            logins = authenticate(
+                username=username,
+                password=password
+            )
+            
+            if logins is not None:
+                if logins.is_active:
+                    status = True
+                    message = "Success!"
+                    login(request, logins)
+                else:
+                    status = False
+                    message = 'Currently, This user is not active'
+                    
     return Response(
         {
             "status": status,
@@ -369,6 +384,11 @@ def login_api(request):
 
     username = request.data['username']
     password = request.data['password']
+
+    try:
+        username = User.objects.get(username=username).username
+    except:
+        username = User.objects.get(email=username).username
 
     user = authenticate(
         username=username,
@@ -458,6 +478,7 @@ def getAllProductData(request):
         }
     )
 
+
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
@@ -469,16 +490,16 @@ def getProductShop(request):
 
         product_info = serializers.ProductDataSerializer(
             models.ProductData.objects.get(id=product.id)).data
-        
+
         product_info['product_category'] = models.ProductCategory.objects.get(
             id=int(product_info['product_category'])).category
-        
+
         data.append(product_info)
-    
+
     return Response(
         {
             "status": True,
-            "data":data
+            "data": data
         }
     )
 

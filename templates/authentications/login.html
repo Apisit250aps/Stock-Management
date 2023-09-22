@@ -99,7 +99,7 @@
 
         <p class="text-center">
           <span>New on our platform?</span>
-          <a href="auth-register-basic.html">
+          <a href="{% url 'register' %}">
             <span>Create an account</span>
           </a>
         </p>
@@ -150,7 +150,7 @@
           )
           .then((response) => {
             if (response.data['status']){
-              location.replace('shop/all-product')
+              location.replace("{% url 'index' %}")
             }
             else {
               this.on_alert = true

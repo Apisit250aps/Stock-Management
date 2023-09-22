@@ -9,40 +9,54 @@ def getUser(request):
     return request.user.is_authenticated
 
 
-# @login_required(login_url='/page/login/')
+@login_required(login_url='/login/')
 def homepage(request):
 
     return render(request, 'shop/base.html')
 
 # public
+
+
 def products(request):
-    
+
     return render(request, 'public/products.html')
 
+
 def shops(request):
-    
+
     return render(request, 'public/shops.html')
 
 # authentications
+
+
 def login(request):
-    
+
     return render(request, 'authentications/login.html')
 
+
 def register(request):
-    
+
     return render(request, 'authentications/register.html')
+
+@login_required(login_url='/login/')
+def createShop(request):
+
+    return render(request, 'authentications/create-shop.html')
 
 
 
 # shop
+@login_required(login_url='/login/')
 def shopInvoice(request):
-    
+
     return render(request, 'shop/input-invoice.html')
 
+@login_required(login_url='/login/')
 def shopProducts(request):
 
     return render(request, 'shop/all-product.html')
 
+@login_required(login_url='/login/')
 def dataInput(request):
-    
+
     return render(request, 'shop/data-input.html')

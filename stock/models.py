@@ -173,7 +173,7 @@ class OutputData(models.Model):
 
 class ProductShop(models.Model):
     shop = models.ForeignKey(ShopData, on_delete=models.CASCADE)
-    product = models.ForeignKey(ProductData, on_delete=models.CASCADE, unique=True, related_name='product')
+    product = models.ForeignKey(ProductData, on_delete=models.CASCADE, related_name='product')
     
     def __str__(self) -> str:
         return self.product.product_code

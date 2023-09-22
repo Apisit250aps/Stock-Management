@@ -1,0 +1,445 @@
+{% extends "authentications/base.html" %}
+<!-- blocks -->
+{% block content %}
+<!-- content here! -->
+<style>
+
+</style>
+<div class="row m-auto h-100">
+    <div class="col-xl-3 d-none d-xl-block">
+
+    </div>
+    <div class="col-12 col-xl-6 vh-100">
+        <div class="d-flex align-items-center justify-content-center h-100">
+            <div class="card my-auto w-100" id="shop">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">Shop Create</h5>
+                    <small class="text-muted float-end">Creating</small>
+                </div>
+                <div class="card-body">
+                    <hr>
+                    <form>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="shop-name">Shop</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" :class="{'is-invalid':!shop_isValid}"
+                                    id="shop-name" v-model="shop" required />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="product-type">Product Type</label>
+                            <div class="col-sm-10">
+                                <input type="text" list="pro_type" :class="{'is-invalid':!product_type_isValid}"
+                                    class="form-control" id="product-type" v-model.trim="product_type" />
+
+                                <datalist id="pro_type">
+                                    <option v-for="item in product_type_list" :value="item.type_name">[{item.type_name}]
+                                    </option>
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="contact">Contact</label>
+                            <div class="col-sm-10">
+                                <div class=" row m-auto row-cols-1 row-cols-lg-2">
+                                    <div class="col p-0">
+                                        <input type="text" class="form-control" :class="{'is-invalid':!fname_isValid}"
+                                            id="contact" v-model.trim="fname" placeholder="First name" />
+                                    </div>
+                                    <div class="col p-0">
+                                        <input type="text" class="form-control" :class="{'is-invalid':!lname_isValid}"
+                                            id="contact" v-model.trim="lname" placeholder="Last name" />
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="province">Address</label>
+                            <div class="col-sm-10">
+                                <div class=" row m-auto row-cols-1 row-cols-lg-4">
+                                    <div class="col my-1 p-0 my-lg-0">
+                                        <label class="form-label-sm" for="province">Province</label>
+                                        <select v-model.trim="province" class="form-select" id="province"
+                                            @change="onProvinceChange()" :class="{'is-invalid':!province_isValid}">
+                                            <option v-for="item in province_list" :value="item">[{item}]</option>
+                                        </select>
+                                    </div>
+                                    <div class="col my-1 p-0 my-lg-0">
+                                        <label class="form-label-sm" for="district">District</label>
+                                        <select v-model.trim="district" class="form-select" id="district"
+                                            @change="onDistrictChange()" :class="{'is-invalid':!district_isValid}">
+                                            <option v-for="item in district_list" :value="item">[{item}]</option>
+                                        </select>
+                                    </div>
+                                    <div class="col my-1 p-0 my-lg-0">
+                                        <label class="form-label-sm" for="sub-district">Sub District</label>
+                                        <select v-model.trim="sub_district" class="form-select" id="sub-district"
+                                            :class="{'is-invalid':!sub_district_isValid}">
+                                            <option v-for="item in sub_district_list" :value="item">[{item}]</option>
+                                        </select>
+                                    </div>
+                                    <div class="col my-1 p-0 my-lg-0">
+                                        <label class="form-label-sm" for="zip-code">Zip Code</label>
+                                        <input type="text" class="form-control" id="zip-code" v-model.trim="zip"
+                                            :class="{'is-invalid':!zip_isValid}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="detail">Details Address</label>
+                            <div class="col-sm-10">
+                                <textarea id="detail" class="form-control" v-model.trim="detail"
+                                    :class="{'is-invalid':!detail_isValid}"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="area">Area</label>
+                            <div class="col-sm-10">
+
+                                <select v-model.trim="area" class="form-select" id="area"
+                                    :class="{'is-invalid':!area_isValid}">
+                                    <option v-for="item in area_list" :value="item.id">[{item.area_name}]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="email">Email</label>
+                            <div class="col-sm-10">
+                                <div class="input-group input-group-merge">
+                                    <input type="text" id="email" class="form-control" placeholder="john.doe"
+                                        aria-label="john.doe" aria-describedby="email2" v-model.trim="email"
+                                        :class="{'is-invalid':!email_isValid}" />
+                                    <span class="input-group-text" id="email2">@example.com</span>
+                                </div>
+                                <div class="form-text">You can use letters, numbers & periods</div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="phone">Phone No</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="phone" class="form-control phone-mask" placeholder="658 799 8941"
+                                    v-model.trim="tel" aria-label="658 799 8941" aria-describedby="phone"
+                                    :class="{'is-invalid':!tel_isValid}" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="fax">Fax No</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="fax" class="form-control phone-mask" placeholder="658 799 8941"
+                                    aria-label="658 799 8941" aria-describedby="fax" v-model.trim="fax"
+                                    :class="{'is-invalid':!fax_isValid}" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label" for="basic-remark">Remark</label>
+                            <div class="col-sm-10">
+                                <textarea id="basic-remark" class="form-control"
+                                    placeholder="Hi, Do you have a moment to talk Joe?"
+                                    aria-label="Hi, Do you have a moment to talk Joe?"
+                                    aria-describedby="basic-icon-remark2" v-model.trim="remark"></textarea>
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-sm-10">
+                                <button type="submit" @click="onSubmit($event)" class="btn btn-primary">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 d-none d-xl-block"></div>
+
+</div>
+
+{% endblock content %}
+<!-- scripts -->
+{% block script %}
+<!-- script here! -->
+<script>
+    const { createApp } = Vue;
+
+    createApp(
+        {
+            delimiters: ["[{", "}]"],
+            data() {
+                return {
+                    shop: "",
+                    shop_isValid: true,
+                    product_type: "",
+                    product_type_isValid: true,
+                    fname: "",
+                    fname_isValid: true,
+                    lname: "",
+                    lname_isValid: true,
+
+                    province: "",
+                    province_isValid: true,
+                    district: "",
+                    district_isValid: true,
+                    sub_district: "",
+                    sub_district_isValid: true,
+                    zip: "",
+                    zip_isValid: true,
+                    detail: "",
+                    detail_isValid: true,
+
+                    area: "",
+                    area_isValid: true,
+                    email: "",
+                    email_isValid: true,
+                    tel: "",
+                    tel_isValid: true,
+                    fax: "",
+                    fax_isValid: true,
+                    remark: "",
+                    remark_isValid: true,
+
+                    area_list: null,
+                    product_type_list: null,
+                    province_list: null,
+                    district_list: null,
+                    sub_district_list: null,
+
+                    isValid: true,
+
+
+
+
+
+
+                };
+
+            },
+            mounted() {
+                axios(
+                    {
+                        method: "get",
+                        url: "{% url 'get-province' %}"
+                    }
+                )
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.province_list = response.data['data'];
+                        }
+
+                    }).catch((err) => {
+
+                    });
+
+                axios(
+                    {
+                        method: "get",
+                        url: "{% url 'get-product-type' %}"
+                    }
+                )
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.product_type_list = response.data['data'];
+                        }
+
+                    }).catch((err) => {
+
+                    });
+
+                axios(
+                    {
+                        method: "get",
+                        url: "{% url 'get-area' %}"
+                    }
+                )
+                    .then((response) => {
+                        if (response.data['status']) {
+                            this.area_list = response.data['data'];
+                        }
+
+                    }).catch((err) => {
+
+                    });
+
+
+            },
+            methods: {
+                onProvinceChange() {
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append('province', this.province);
+                    axios(
+                        {
+                            method: "post",
+                            url: "{% url 'get-district' %}",
+                            data: form_data
+                        }
+                    )
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.district_list = response.data['data'];
+                                this.district = "";
+                                this.sub_district_list = null;
+                            }
+
+                        }).catch((err) => {
+
+                        });
+                },
+                onDistrictChange() {
+                    const form_data = new FormData;
+                    form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                    form_data.append('province', this.province);
+                    form_data.append('district', this.district);
+                    axios(
+                        {
+                            method: "post",
+                            url: "{% url 'get-subDistrict' %}",
+                            data: form_data
+                        }
+                    )
+                        .then((response) => {
+                            if (response.data['status']) {
+                                this.sub_district_list = response.data['data'];
+                                this.sub_district = "";
+
+                            }
+
+                        }).catch((err) => {
+
+                        });
+                },
+                onSubmit(e) {
+                    e.preventDefault();
+
+                    this.isValid = true;
+
+                    this.shop_isValid = true;
+                    if (this.shop == "") {
+                        this.shop_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.product_type_isValid = true;
+                    if (this.product_type == "") {
+                        this.product_type_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.lname_isValid = true;
+                    if (this.lname == "") {
+                        this.lname_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.fname_isValid = true;
+                    if (this.fname == "") {
+                        this.fname_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.province_isValid = true;
+                    if (this.province == "") {
+                        this.province_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.district_isValid = true;
+                    if (this.district == "") {
+                        this.district_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.sub_district_isValid = true;
+                    if (this.sub_district == "") {
+                        this.sub_district_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.zip_isValid = true;
+                    if (this.zip == "") {
+                        this.zip_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.detail_isValid = true;
+                    if (this.detail == "") {
+                        this.detail_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.area_isValid = true;
+                    if (this.area == "") {
+                        this.area_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.email_isValid = true;
+                    if (this.email == "") {
+                        this.email_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.tel_isValid = true;
+                    if (this.tel == "") {
+                        this.tel_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.fax_isValid = true;
+                    if (this.fax == "") {
+                        this.fax_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.remark_isValid = true;
+                    if (this.remark == "") {
+                        this.remark_isValid = false;
+                        this.isValid = false;
+                    }
+
+                    if (this.isValid) {
+                        const form_data = new FormData;
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append('shop', this.shop);
+                        form_data.append('product_type', this.product_type);
+                        form_data.append('fname', this.fname);
+                        form_data.append('lname', this.lname);
+                        form_data.append('province', this.province);
+                        form_data.append('district', this.district);
+                        form_data.append('sub_district', this.sub_district);
+                        form_data.append('zip', this.zip);
+                        form_data.append('detail', this.detail);
+                        form_data.append('area', this.area);
+                        form_data.append('email', this.email);
+                        form_data.append('tel', this.tel);
+                        form_data.append('fax', this.fax);
+                        form_data.append('remark', this.remark);
+
+                        axios(
+                            {
+                                method: "post",
+                                data: form_data,
+                                url: "{% url 'create-shop-api' %}"
+                            }
+                        )
+                            .then((response) => {
+                                if (response.data['status']) {
+                                    Swal.fire(
+                                        'Success',
+                                        'Create shop successfully',
+                                        'success'
+                                    );
+
+                                    location.replace("{% url 'index' %}")
+                                }
+                                else {
+                                    Swal.fire(
+                                        'Fail',
+                                        'Create shop fail!',
+                                        'error'
+                                    );
+                                }
+
+                            }).catch((err) => {
+                                Swal.fire(
+                                    'The Internet?',
+                                    'That thing is still around?',
+                                    'question'
+                                );
+                            });
+                    }
+                }
+            }
+
+        }
+    ).mount("#app")
+</script>
+{% endblock script %}

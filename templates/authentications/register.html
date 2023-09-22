@@ -5,7 +5,7 @@
 <div class="authentication-wrapper authentication-basic container-p-y">
     <div class="authentication-inner w-100" style="width: 100%;">
         <!-- Register Card -->
-        <div class="card " >
+        <div class="card ">
             <div class="card-body">
                 <!-- Logo -->
                 <div class="app-brand justify-content-center">
@@ -61,11 +61,11 @@
                 <h4 class="mb-2">Adventure starts here 🚀</h4>
                 <p class="mb-4">Make your app management easy and fun!</p>
 
-                <form id="formAuthentication" class="mb-3" >
+                <form id="formAuthentication" class="mb-3">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username"
-                            placeholder="Enter your username" autofocus v-model="username"/>
+                            placeholder="Enter your username" autofocus v-model="username" />
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
@@ -101,12 +101,12 @@
                             </label>
                         </div>
                     </div> -->
-                    <button class="btn btn-primary d-grid w-100">Sign up</button>
+                    <button class="btn btn-primary d-grid w-100" @click="onSubmit($event)">Sign up</button>
                 </form>
 
                 <p class="text-center">
                     <span>Already have an account?</span>
-                    <a href="auth-login-basic.html">
+                    <a href="{% url 'login' %}">
                         <span>Sign in instead</span>
                     </a>
                 </p>
@@ -136,9 +136,79 @@
                     password_isValid: true,
                     confirm: "",
                     confirm_isValid: true,
-                    isValid:true
+                    isValid: true
 
                 };
+            },
+            methods: {
+                onSubmit(e) {
+                    e.preventDefault();
+
+                    this.isValid = true;
+
+                    this.email_isValid = true;
+                    if (this.email == '') {
+                        this.email_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.username_isValid = true;
+                    if (this.username == '') {
+                        this.username_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.password_isValid = true;
+                    if (this.password.length < 8) {
+                        this.password_isValid = false;
+                        this.isValid = false;
+                    }
+                    this.password_isValid = true;
+                    if (this.password !== this.confirm) {
+                        this.password_isValid = false;
+                        this.isValid = false;
+                    }
+
+                    if (this.isValid) {
+                        const form_data = new FormData;
+                        form_data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                        form_data.append('email', this.email);
+                        form_data.append('username', this.username);
+                        form_data.append('password', this.password);
+
+                        axios(
+                            {
+                                method: "post",
+                                url: "{% url 'register-api' %}",
+                                data: form_data
+                            }
+                        )
+                            .then((response) => {
+                                if (response.data['status']) {
+                                    Swal.fire(
+                                        'Success!',
+                                        'Create user successfully!',
+                                        'success'
+                                    );
+
+                                    location.replace("{% url 'create-shop-page' %}");
+
+                                }
+                                else {
+                                    Swal.fire(
+                                        'Failed!',
+                                        response.data['message'],
+                                        'error'
+                                    );
+                                }
+
+                            }).catch((err) => {
+                                Swal.fire(
+                                    'Somethings is Wrong!',
+                                    'That thing is still around?',
+                                    'question'
+                                );
+                            });
+                    }
+                }
             }
 
         }
