@@ -18,5 +18,6 @@ urlpatterns = [
     # shop
     path('shop/product-all', app.shopProducts, name='shop-products-page'),
     path('shop/input-invoice', app.shopInvoice, name='shop-invoice-page'),
-    path('shop/data-input', app.dataInput, name='shop-data-input-page'),
+    path('shop/add-product', app.dataInput, name='shop-data-input-page'),
+    path('shop/input-data', app.shopInputData, name='shop-input-data-page'),
 ]

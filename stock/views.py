@@ -575,7 +575,7 @@ def getShopInputInvoices(request):
             data['product'] = serializers.ProductDataSerializer(
                 models.ProductData.objects.filter(id=int(data['product'])), many=True).data[0]
             
-            data = maps.ProductData(data['product'])
+            data['product'] = maps.ProductData(data['product'])
             input_information.append(data)
 
         invoice["data_input"] = input_information

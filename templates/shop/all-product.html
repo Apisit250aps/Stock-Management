@@ -38,8 +38,10 @@
                                 <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i>
-                                    Edit</a>
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modalCenter" @click="onSelect(index)">
+                                    <i class="bx bx-edit-alt me-1"></i>
+                                    Edit
+                                </button>
                                 <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>
                                     Delete</a>
                             </div>
@@ -50,6 +52,48 @@
         </table>
     </div>
 </div>
+
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">
+            Launch modal
+        </button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">[{editCode}]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row row-cols-1 row-cols-lg-2">
+                    <div class="col mb-2">
+                        <label for="nameWithTitle" class="form-label">Name</label>
+                        <input type="text" id="nameWithTitle" class="form-control" placeholder="Enter Name" v-model="editName"/>
+                    </div>
+                    <div class="col mb-2">
+                        <label for="emailWithTitle" class="form-label">Price</label>
+                        <input type="number" id="emailWithTitle" class="form-control" placeholder="xxxx@xxx.xx" v-model="editPrice"/>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col">
+                        <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" v-model="editDesc"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 <!-- scripts -->
 {% block script %}
@@ -64,8 +108,15 @@
                 return {
                     page: "shop",
                     type: "all-product",
+                    product_list: null,
 
-                    product_list: null
+                    indexSelect: null,
+                    ObjectSelect: null,
+                    editID:null,
+                    editCode:null,
+                    editName: null,
+                    editPrice: null,
+                    editDesc: null,
 
                 };
             },
@@ -84,6 +135,19 @@
                     }).catch((err) => {
 
                     });
+            },
+            methods: {
+                onSelect(index) {
+                    this.ObjectSelect = this.product_list[index];
+                    this.editCode = this.ObjectSelect['product_code']
+                    this.editID = this.ObjectSelect['id']
+                    this.editName = this.ObjectSelect['product_name']
+                    this.editPrice = this.ObjectSelect['product_price']
+                    this.editDesc = this.ObjectSelect['product_desc']
+                },
+                onEdit(e){
+                    
+                }
             }
         }
     ).mount("#app")

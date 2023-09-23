@@ -5,9 +5,7 @@ from . import models
 class ProductDataSerializer(serializers.ModelSerializer):
     
     
-    def create(self, validated_data):
-        
-        return super().create(validated_data)
+    
     class Meta:
         model = models.ProductData
         fields = '__all__'

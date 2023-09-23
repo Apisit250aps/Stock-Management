@@ -195,6 +195,11 @@
                   </a>
                 </li>
                 <li class="menu-item" :class="{'active':type=='input-data'}">
+                  <a href="{% url 'shop-input-data-page' %}" class="menu-link">
+                    <div data-i18n="Without navbar">Data Input</div>
+                  </a>
+                </li>
+                <li class="menu-item" :class="{'active':type=='add-new'}">
                   <a href="{% url 'shop-data-input-page' %}" class="menu-link">
                     <div data-i18n="Container">Add New +</div>
                   </a>

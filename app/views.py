@@ -56,6 +56,11 @@ def shopInvoice(request):
     return render(request, 'shop/input-invoice.html')
 
 @login_required(login_url='/login/')
+def shopInputData(request):
+
+    return render(request, 'shop/input-data.html')
+
+@login_required(login_url='/login/')
 def shopProducts(request):
 
     return render(request, 'shop/all-product.html')
@@ -63,4 +68,4 @@ def shopProducts(request):
 @login_required(login_url='/login/')
 def dataInput(request):
 
-    return render(request, 'shop/data-input.html')
+    return render(request, 'shop/add-new.html')
