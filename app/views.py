@@ -69,3 +69,8 @@ def shopProducts(request):
 def dataInput(request):
 
     return render(request, 'shop/add-new.html')
+
+# Account
+@login_required(login_url='/login/')
+def Account(request):
+    return render(request, 'account/account.html')

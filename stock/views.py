@@ -620,18 +620,16 @@ def editProduct(request):
 
     edit = request.data
     status = True
-    product_id = edit['product_id']
+    product_code = edit['product_code']
     product_name = edit['product_name']
+    product_price = edit['product_price']
     product_desc = edit['product_desc']
-    unit_cost = edit['unit_cost']
-
-    print(product_name)
-
+ 
     try:
-        models.ProductData.objects.filter(product_id=product_id).update(
+        models.ProductData.objects.filter(product_code=product_code).update(
             product_name=product_name,
             product_desc=product_desc,
-            unit_cost=unit_cost
+            product_price=product_price
         )
 
     except TypeError as err:

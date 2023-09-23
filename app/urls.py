@@ -20,4 +20,7 @@ urlpatterns = [
     path('shop/input-invoice', app.shopInvoice, name='shop-invoice-page'),
     path('shop/add-product', app.dataInput, name='shop-data-input-page'),
     path('shop/input-data', app.shopInputData, name='shop-input-data-page'),
+    
+    # account
+    path('account/account', app.Account, name='account-page')
 ]
